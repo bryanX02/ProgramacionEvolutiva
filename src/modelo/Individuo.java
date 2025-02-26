@@ -1,6 +1,6 @@
-package practica1;
+package modelo;
 
-public abstract class Individuo <T> {
+public class Individuo <T> {
 
 	T[] cromosoma;
 	int[] tamGenes;
@@ -8,9 +8,7 @@ public abstract class Individuo <T> {
 	protected double[] min;
 	protected double[] max;
 	protected double valorError;
-	
-	public abstract T fitness();
-	public abstract int tamGen(double valorError, double min, double max);
+
 	
 	public T[] getCromosoma() {
 		return cromosoma;
