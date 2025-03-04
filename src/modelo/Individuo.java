@@ -22,6 +22,10 @@ public class Individuo <T> {
 	public void setTamGenes(int[] tamGenes) {
 		this.tamGenes = tamGenes;
 	}
+	
+	public double getFitness() {
+		return 0.0;
+	}
 
 	
 

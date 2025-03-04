@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-public class PoblacionFun2 extends ArrayList<IndividuoFuncion2> implements Poblacion{
+public class PoblacionFun2 extends Poblacion<IndividuoFuncion2>{
 	
 	private int tamPoblacion;
 	private AlgoritmoGenetico algoritmo;

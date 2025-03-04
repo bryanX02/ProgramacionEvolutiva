@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-public class PoblacionFun1 extends ArrayList<IndividuoFuncion1> implements Poblacion{
+public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
 	
 	private int tamPoblacion;
 	private AlgoritmoGenetico algoritmo;
@@ -24,17 +24,17 @@ public class PoblacionFun1 extends ArrayList<IndividuoFuncion1> implements Pobla
 	}
 
 	// Funciones
+	@Override
 	public void iniciarGeneracion() {
-		
 		// Inciamos la poblacion
 		for (int i = 0; i <tamPoblacion; i++) {
 			
 			this.add(new IndividuoFuncion1());
 			
 		}
-		
 	}
 	
+	@Override
 	public double getFitnessMedio() {
 	    if (this.isEmpty()) return 0.0; // Evita divisiones por cero
 
@@ -49,6 +49,8 @@ public class PoblacionFun1 extends ArrayList<IndividuoFuncion1> implements Pobla
 
 	// METODOS DE SELECCION
 	
+	
+	@Override
 	public PoblacionFun1 seleccionarSegun(String metodoSeleccion) {
         switch (metodoSeleccion) {
             case "Ruleta":
@@ -68,6 +70,7 @@ public class PoblacionFun1 extends ArrayList<IndividuoFuncion1> implements Pobla
         }
     }
 
+	@Override
     public void cruzarSegun(String metodoCruce) {
         if ("Monopunto".equals(metodoCruce)) {
             cruceMonopunto();
@@ -228,7 +231,7 @@ public class PoblacionFun1 extends ArrayList<IndividuoFuncion1> implements Pobla
         return nuevaGeneracion;
     }
 	
-
+    @Override
 	public void mutacion() {
 	    Random rand = new Random();
 
@@ -324,17 +327,11 @@ public class PoblacionFun1 extends ArrayList<IndividuoFuncion1> implements Pobla
 	    this.addAll(nuevaPoblacion);
 	}
 
+	@Override
 	public IndividuoFuncion1 getMejorIndividuo() {
         return this.stream().max((a, b) -> Double.compare(a.getFitness(), b.getFitness())).orElse(null);
     }
 
-
-
-	@Override
-	public Poblacion seleccionRuleta1() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	
 	

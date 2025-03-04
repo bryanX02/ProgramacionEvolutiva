@@ -1,8 +1,32 @@
 package modelo;
 
-public interface Poblacion {
+import java.util.ArrayList;
 
-	public Poblacion seleccionRuleta();
-	public Poblacion seleccionRuleta1();
+public class Poblacion<T> extends ArrayList<T>{
+
+	public void iniciarGeneracion() {
+		
+	}
+	
+	public Poblacion seleccionarSegun(String metodo) {
+		return null;
+	}
+	
+	public void cruzarSegun(String metodo) {
+	
+	}
+	
+	public void mutacion() {
+		
+	}
+	
+	public Individuo<T> getMejorIndividuo() {
+		return null;
+	}
+	
+	public double getFitnessMedio() {
+		return 0.0;
+	}
+	
 	
 }
