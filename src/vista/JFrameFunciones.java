@@ -26,7 +26,7 @@ import modelo.*;
 public class JFrameFunciones extends JFrame {
 	
 	private JPanel contentPane;
-    private JTextField txtFuncion, txtPoblacion, txtGeneraciones, txtCruce, txtMutacion, txtElitismo;
+    private JTextField txtPoblacion, txtGeneraciones, txtCruce, txtMutacion, txtElitismo, txtDimensiones;
     private JComboBox<String> cmbFuncion, cmbSeleccion, cmbCruce, cmbMutacion;
     private JButton btnEjecutar;
     private ChartPanel chartPanel;
@@ -61,11 +61,6 @@ public class JFrameFunciones extends JFrame {
     	JPanel panelConfiguracion = new JPanel();
     	
     	panelConfiguracion.setLayout(new BoxLayout(panelConfiguracion, BoxLayout.Y_AXIS));
-        
-    	panelConfiguracion.add(new JLabel("Función Matemática"));
-        cmbFuncion = new JComboBox<>(new String[]{"F1: Calibracion y prueba", "F2: Mishra Bird", 
-        		"F3: Schubert", "F4: Michalewicz Binarios", "F5: Michalewicz Reales"});
-        panelConfiguracion.add(cmbSeleccion);
     	
         panelConfiguracion.add(new JLabel("Tamaño de población:"));
         txtPoblacion = new JTextField("100");
@@ -86,6 +81,15 @@ public class JFrameFunciones extends JFrame {
         panelConfiguracion.add(new JLabel("Porcentaje de elitismo:"));
         txtElitismo = new JTextField("0");
         panelConfiguracion.add(txtElitismo);
+        
+        panelConfiguracion.add(new JLabel("Número de dimensiones:"));
+        txtDimensiones = new JTextField("2");
+        panelConfiguracion.add(txtDimensiones);
+        
+        panelConfiguracion.add(new JLabel("Función Matemática"));
+        cmbFuncion = new JComboBox<>(new String[]{"F1: Calibracion y prueba", "F2: Mishra Bird", 
+        		"F3: Schubert", "F4: Michalewicz Binarios", "F5: Michalewicz Reales"});
+        panelConfiguracion.add(cmbFuncion);
         
         panelConfiguracion.add(new JLabel("Método de Selección:"));
         cmbSeleccion = new JComboBox<>(new String[]{"Ruleta", "Torneo Probabilístico", "Torneo Determinístico", "Estocástico Universal", "Truncamiento", "Restos"});
@@ -113,6 +117,7 @@ public class JFrameFunciones extends JFrame {
         double probCruce = Double.parseDouble(txtCruce.getText()) / 100.0;
         double probMutacion = Double.parseDouble(txtMutacion.getText()) / 100.0;
         double elitismo = Double.parseDouble(txtElitismo.getText()) / 100.0;
+        int dimensiones = Integer.parseInt(txtDimensiones.getText());
 
         String funcion = (String) cmbFuncion.getSelectedItem();
         String metodoSeleccion = (String) cmbSeleccion.getSelectedItem();
@@ -124,6 +129,11 @@ public class JFrameFunciones extends JFrame {
         
         Poblacion poblacion = obtenerPoblacionFuncion(funcion, tamPoblacion, algoritmo);
         
+        if (funcion == "F4: Michalewicz Binarios" || funcion == "F5: Michalewicz Reales") {
+        	poblacion.iniciarGeneracion(dimensiones);
+        }else {
+        	poblacion.iniciarGeneracion();
+        }
         poblacion.iniciarGeneracion();
         ArrayList<Poblacion> generaciones = new ArrayList<>();
         generaciones.add(poblacion);

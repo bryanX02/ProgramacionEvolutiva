@@ -40,6 +40,7 @@ public class IndividuoFuncion5 extends Individuo<Double> implements Cloneable {
     }
 	
 	// Fitness es el valor de la función
+    @Override
     public double getFitness() {
         return this.getValor();
     }

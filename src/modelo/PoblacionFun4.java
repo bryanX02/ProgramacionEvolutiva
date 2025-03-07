@@ -24,7 +24,7 @@ public class PoblacionFun4 extends Poblacion<IndividuoFuncion4>{
 	}
 
 	// Funciones
-	public void iniciarGeneracion(int dimension) {
+	public void iniciarGeneracionDimensionada(int dimension) {
 		
 		// Inciamos la poblacion
 		for (int i = 0; i <tamPoblacion; i++) {
@@ -335,12 +335,6 @@ public class PoblacionFun4 extends Poblacion<IndividuoFuncion4>{
 	public IndividuoFuncion4 getMejorIndividuo() {
         return this.stream().min((a, b) -> Double.compare(a.getFitness(), b.getFitness())).orElse(null);
     }
-
-	@Override
-	public Poblacion seleccionRuleta1() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	
 	

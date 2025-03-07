@@ -8,6 +8,10 @@ public class Poblacion<T> extends ArrayList<T>{
 		
 	}
 	
+	public void iniciarGeneracionDimensionada() {
+		
+	}
+	
 	public Poblacion seleccionarSegun(String metodo) {
 		return null;
 	}
@@ -20,7 +24,7 @@ public class Poblacion<T> extends ArrayList<T>{
 		
 	}
 	
-	public Individuo<T> getMejorIndividuo() {
+	public Individuo getMejorIndividuo() {
 		return null;
 	}
 	

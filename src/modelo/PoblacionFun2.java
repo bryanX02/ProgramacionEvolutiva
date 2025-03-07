@@ -334,15 +334,10 @@ public class PoblacionFun2 extends Poblacion<IndividuoFuncion2>{
 	    this.addAll(nuevaPoblacion);
 	}
 
+	@Override
 	public IndividuoFuncion2 getMejorIndividuo() {
         return this.stream().min((a, b) -> Double.compare(a.getFitness(), b.getFitness())).orElse(null);
     }
-
-	@Override
-	public Poblacion seleccionRuleta1() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	
 	

@@ -24,7 +24,7 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
 	}
 
 	// Funciones
-	public void iniciarGeneracion(int dimension) {
+	public void iniciarGeneracionDimensionada(int dimension) {
 		
 		// Inciamos la poblacion
 		for (int i = 0; i <tamPoblacion; i++) {
@@ -336,13 +336,6 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
 	public IndividuoFuncion5 getMejorIndividuo() {
         return this.stream().max((a, b) -> Double.compare(a.getFitness(), b.getFitness())).orElse(null);
     }
-
-	@Override
-	public Poblacion seleccionRuleta1() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	
 	
 	/* Cuando pensaba que el cruce era entre genes

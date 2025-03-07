@@ -337,13 +337,6 @@ public class PoblacionFun3 extends Poblacion<IndividuoFuncion3>{
 	public IndividuoFuncion3 getMejorIndividuo() {
         return this.stream().min((a, b) -> Double.compare(a.getFitness(), b.getFitness())).orElse(null);
     }
-
-	@Override
-	public Poblacion seleccionRuleta1() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	
 	
 	/* Cuando pensaba que el cruce era entre genes
