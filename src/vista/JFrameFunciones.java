@@ -112,6 +112,7 @@ public class JFrameFunciones extends JFrame {
     
     private void ejecutarAlgoritmo() {
     	
+    	// Se obtienen los parametros seleccionados por el usuario
     	int tamPoblacion = Integer.parseInt(txtPoblacion.getText());
         int maxGeneraciones = Integer.parseInt(txtGeneraciones.getText());
         double probCruce = Double.parseDouble(txtCruce.getText()) / 100.0;
@@ -124,39 +125,50 @@ public class JFrameFunciones extends JFrame {
         String metodoCruce = (String) cmbCruce.getSelectedItem();
         String metodoMutacion = (String) cmbMutacion.getSelectedItem();
         
+        // Se crea el algoriutomo y la poblacion
         AlgoritmoGenetico algoritmo = new AlgoritmoGenetico(tamPoblacion, maxGeneraciones, probCruce, probMutacion, elitismo, 3);
-        
-        
         Poblacion poblacion = obtenerPoblacionFuncion(funcion, tamPoblacion, algoritmo);
         
+        // Se inician las generaciones (individuos random)
         if (funcion == "F4: Michalewicz Binarios" || funcion == "F5: Michalewicz Reales") {
-        	poblacion.iniciarGeneracion(dimensiones);
+        	poblacion.iniciarGeneracionDimensionada(dimensiones);
         }else {
         	poblacion.iniciarGeneracion();
         }
-        poblacion.iniciarGeneracion();
+        
+        // Y ahora se aplicara el algoritmo de evolucion e iremos guardando las generaciones
         ArrayList<Poblacion> generaciones = new ArrayList<>();
         generaciones.add(poblacion);
         
+        // Variables que registraran la evolucion para mostrar en la gráfica
         XYSeries mejorSeries = new XYSeries("Mejor Fitness", true, false);
         XYSeries mejorAbsolutoSeries = new XYSeries("Mejor Absoluto", true, false);
         XYSeries mediaSeries = new XYSeries("Fitness Medio", true, false);
         
-        double mejorAbsoluto = Double.MIN_VALUE;
-        
-        for (int i = 1; i <= maxGeneraciones; i++) {
+        // Y ahora se aplicara el algoritmo según el número de generaciones a generar
+        for (int i = 0; i < maxGeneraciones; i++) {
+        	
+        	// Seleccion
             Poblacion nuevaPoblacion = poblacion.seleccionarSegun(metodoSeleccion);
+
+            // Cruze
             nuevaPoblacion.cruzarSegun(metodoCruce);
+            
+            // Mutacion
             if (!"Ninguno".equals(metodoMutacion)) {
                 nuevaPoblacion.mutacion();
             }
+            
+            // Registramos la nueva generacion
             generaciones.add(nuevaPoblacion);
             
-            double mejor = nuevaPoblacion.getMejorIndividuo().getFitness();
-            if (mejor > mejorAbsoluto) mejorAbsoluto = mejor;
+            // Obtenemos el mejor individuo y vemos si es el mejor entre generaciones
             
-            mejorSeries.add(i, mejor);
-            mejorAbsolutoSeries.add(i, mejorAbsoluto);
+            Individuo<?> mejor = nuevaPoblacion.getMejorIndividuo();
+            poblacion.actualizarAbsoluto(mejor);
+            
+            mejorSeries.add(i, mejor.getFitness());
+            mejorAbsolutoSeries.add(i, nuevaPoblacion.getAbsoluto().getFitness());
             mediaSeries.add(i, nuevaPoblacion.getFitnessMedio());
             
             poblacion = nuevaPoblacion;
@@ -173,7 +185,7 @@ public class JFrameFunciones extends JFrame {
         
         chartPanel.setChart(chart);
         
-        JOptionPane.showMessageDialog(this, "Mejor valor encontrado: " + mejorAbsoluto, "Resultado", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Mejor valor encontrado: " + poblacion.getAbsoluto().getFitness(), "Resultado", JOptionPane.INFORMATION_MESSAGE);
     	
     }
 

@@ -1,13 +1,12 @@
 package modelo;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 public class PoblacionFun4 extends Poblacion<IndividuoFuncion4>{
 	
 	private int tamPoblacion;
 	private AlgoritmoGenetico algoritmo;
+	public static IndividuoFuncion4 mejorIndividuoAbsoluto;
 	
 	public PoblacionFun4(int tamPoblacion, AlgoritmoGenetico algoritmo) {
 		super();
@@ -332,85 +331,36 @@ public class PoblacionFun4 extends Poblacion<IndividuoFuncion4>{
 	    this.addAll(nuevaPoblacion);
 	}
 
+	@Override
 	public IndividuoFuncion4 getMejorIndividuo() {
         return this.stream().min((a, b) -> Double.compare(a.getFitness(), b.getFitness())).orElse(null);
     }
+
+	@Override
+	public double getExtremo() {
+		// TODO Auto-generated method stub
+		return Double.MAX_VALUE;
+	}
 	
+	@Override
+	public void actualizarAbsoluto(Individuo mejorIndividuo) {
+
+		if(mejorIndividuo.getFitness() < mejorIndividuoAbsoluto.getFitness()) {
+			mejorIndividuoAbsoluto = (IndividuoFuncion4) mejorIndividuo;
+		}
+		
+	}
 	
-	
-	/* Cuando pensaba que el cruce era entre genes
-	public void cruce() {
-	    Random rand = new Random();
-	    ArrayList<IndividuoFuncion4> nuevaPoblacion = new ArrayList<>();
+	@Override
+	public void setAbsoluto(Individuo ind) {
+		// TODO Auto-generated method stub
+		mejorIndividuoAbsoluto = (IndividuoFuncion4) ind;
+	}
 
-	    for (int i = 0; i < this.size(); i += 2) {
-	        if (i + 1 >= this.size()) {
-	            nuevaPoblacion.add(this.get(i)); // Si hay un individuo sin pareja, lo añadimos sin cruzar
-	            break;
-	        }
-
-	        IndividuoFuncion4 padre1 = this.get(i);
-	        IndividuoFuncion4 padre2 = this.get(i + 1);
-
-	        if (rand.nextDouble() < algoritmo.getProbCruce()) { // Se decide si se cruzan
-	            // Obtener los genes de cada padre
-	            Boolean[][] genes1 = padre1.getGenes();
-	            Boolean[][] genes2 = padre2.getGenes();
-
-	            // Crear hijos con genes cruzados
-	            Boolean[] nuevoGen1A = new Boolean[padre1.getTamGenes()[0]];
-	            Boolean[] nuevoGen1B = new Boolean[padre1.getTamGenes()[1]];
-	            Boolean[] nuevoGen2A = new Boolean[padre2.getTamGenes()[0]];
-	            Boolean[] nuevoGen2B = new Boolean[padre2.getTamGenes()[1]];
-
-	            // Punto de cruce aleatorio para cada gen
-	            int puntoCruce1 = rand.nextInt(padre1.getTamGenes()[0]);
-	            int puntoCruce2 = rand.nextInt(padre1.getTamGenes()[1]);
-
-	            // Cruce del primer gen
-	            for (int j = 0; j < padre1.getTamGenes()[0]; j++) {
-	                if (j < puntoCruce1) {
-	                    nuevoGen1A[j] = genes1[0][j];
-	                    nuevoGen2A[j] = genes2[0][j];
-	                } else {
-	                    nuevoGen1A[j] = genes2[0][j];
-	                    nuevoGen2A[j] = genes1[0][j];
-	                }
-	            }
-
-	            // Cruce del segundo gen
-	            for (int j = 0; j < padre1.getTamGenes()[1]; j++) {
-	                if (j < puntoCruce2) {
-	                    nuevoGen1B[j] = genes1[1][j];
-	                    nuevoGen2B[j] = genes2[1][j];
-	                } else {
-	                    nuevoGen1B[j] = genes2[1][j];
-	                    nuevoGen2B[j] = genes1[1][j];
-	                }
-	            }
-
-	            // Crear nuevos individuos hijos y asignarles los genes cruzados
-	            IndividuoFuncion4 hijo1 = new IndividuoFuncion4();
-	            IndividuoFuncion4 hijo2 = new IndividuoFuncion4();
-
-	            hijo1.setGenes(nuevoGen1A, nuevoGen1B);
-	            hijo2.setGenes(nuevoGen2A, nuevoGen2B);
-
-	            nuevaPoblacion.add(hijo1);
-	            nuevaPoblacion.add(hijo2);
-	        } else {
-	            // Si no hay cruce, se mantienen los mismos individuos
-	            nuevaPoblacion.add(padre1);
-	            nuevaPoblacion.add(padre2);
-	        }
-	    }
-
-	    this.clear();
-	    this.addAll(nuevaPoblacion);
-	}*/
-
-
-
-
+	@Override
+	public Individuo getAbsoluto() {
+		// TODO Auto-generated method stub
+		return mejorIndividuoAbsoluto;
+	}
 	
 }

@@ -8,6 +8,7 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
 	
 	private int tamPoblacion;
 	private AlgoritmoGenetico algoritmo;
+	public static IndividuoFuncion1 mejorIndividuoAbsoluto;
 	
 	public PoblacionFun1(int tamPoblacion, AlgoritmoGenetico algoritmo) {
 		super();
@@ -45,11 +46,18 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
 
 	    return sumaFitness / this.size();
 	}
-
-
+	
+	
+	@Override
+	public double getExtremo() {
+		// TODO Auto-generated method stub
+		return Double.MIN_VALUE;
+	}
+	
+	
 	// METODOS DE SELECCION
-	
-	
+
+
 	@Override
 	public PoblacionFun1 seleccionarSegun(String metodoSeleccion) {
         switch (metodoSeleccion) {
@@ -94,6 +102,7 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
 	    double[] probabilidadesAcumuladas = new double[tamPoblacion];
 	    double acumulado = 0.0;
 
+	    System.out.println(this.size() + " " + tamPoblacion);
 	    for (int i = 0; i < tamPoblacion; i++) {
 	        acumulado += this.get(i).getFitness() / sumaFitness;
 	        probabilidadesAcumuladas[i] = acumulado;
@@ -332,82 +341,32 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
         return this.stream().max((a, b) -> Double.compare(a.getFitness(), b.getFitness())).orElse(null);
     }
 
+	@Override
+	public void actualizarAbsoluto(Individuo mejorIndividuo) {
+
+		if(mejorIndividuo.getFitness() > mejorIndividuoAbsoluto.getFitness()) {
+			try {
+				mejorIndividuoAbsoluto = (IndividuoFuncion1) mejorIndividuo.clone();
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+
+	@Override
+	public void setAbsoluto(Individuo ind) {
+		// TODO Auto-generated method stub
+		mejorIndividuoAbsoluto = (IndividuoFuncion1) ind;
+	}
+
+	@Override
+	public Individuo getAbsoluto() {
+		// TODO Auto-generated method stub
+		return mejorIndividuoAbsoluto;
+	}
 	
 	
-	
-	/* Cuando pensaba que el cruce era entre genes
-	public void cruce() {
-	    Random rand = new Random();
-	    ArrayList<IndividuoFuncion1> nuevaPoblacion = new ArrayList<>();
-
-	    for (int i = 0; i < this.size(); i += 2) {
-	        if (i + 1 >= this.size()) {
-	            nuevaPoblacion.add(this.get(i)); // Si hay un individuo sin pareja, lo añadimos sin cruzar
-	            break;
-	        }
-
-	        IndividuoFuncion1 padre1 = this.get(i);
-	        IndividuoFuncion1 padre2 = this.get(i + 1);
-
-	        if (rand.nextDouble() < algoritmo.getProbCruce()) { // Se decide si se cruzan
-	            // Obtener los genes de cada padre
-	            Boolean[][] genes1 = padre1.getGenes();
-	            Boolean[][] genes2 = padre2.getGenes();
-
-	            // Crear hijos con genes cruzados
-	            Boolean[] nuevoGen1A = new Boolean[padre1.getTamGenes()[0]];
-	            Boolean[] nuevoGen1B = new Boolean[padre1.getTamGenes()[1]];
-	            Boolean[] nuevoGen2A = new Boolean[padre2.getTamGenes()[0]];
-	            Boolean[] nuevoGen2B = new Boolean[padre2.getTamGenes()[1]];
-
-	            // Punto de cruce aleatorio para cada gen
-	            int puntoCruce1 = rand.nextInt(padre1.getTamGenes()[0]);
-	            int puntoCruce2 = rand.nextInt(padre1.getTamGenes()[1]);
-
-	            // Cruce del primer gen
-	            for (int j = 0; j < padre1.getTamGenes()[0]; j++) {
-	                if (j < puntoCruce1) {
-	                    nuevoGen1A[j] = genes1[0][j];
-	                    nuevoGen2A[j] = genes2[0][j];
-	                } else {
-	                    nuevoGen1A[j] = genes2[0][j];
-	                    nuevoGen2A[j] = genes1[0][j];
-	                }
-	            }
-
-	            // Cruce del segundo gen
-	            for (int j = 0; j < padre1.getTamGenes()[1]; j++) {
-	                if (j < puntoCruce2) {
-	                    nuevoGen1B[j] = genes1[1][j];
-	                    nuevoGen2B[j] = genes2[1][j];
-	                } else {
-	                    nuevoGen1B[j] = genes2[1][j];
-	                    nuevoGen2B[j] = genes1[1][j];
-	                }
-	            }
-
-	            // Crear nuevos individuos hijos y asignarles los genes cruzados
-	            IndividuoFuncion1 hijo1 = new IndividuoFuncion1();
-	            IndividuoFuncion1 hijo2 = new IndividuoFuncion1();
-
-	            hijo1.setGenes(nuevoGen1A, nuevoGen1B);
-	            hijo2.setGenes(nuevoGen2A, nuevoGen2B);
-
-	            nuevaPoblacion.add(hijo1);
-	            nuevaPoblacion.add(hijo2);
-	        } else {
-	            // Si no hay cruce, se mantienen los mismos individuos
-	            nuevaPoblacion.add(padre1);
-	            nuevaPoblacion.add(padre2);
-	        }
-	    }
-
-	    this.clear();
-	    this.addAll(nuevaPoblacion);
-	}*/
-
-
-
-
 	
 }

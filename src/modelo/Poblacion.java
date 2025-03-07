@@ -8,7 +8,7 @@ public class Poblacion<T> extends ArrayList<T>{
 		
 	}
 	
-	public void iniciarGeneracionDimensionada() {
+	public void iniciarGeneracionDimensionada(int dimension) {
 		
 	}
 	
@@ -30,6 +30,24 @@ public class Poblacion<T> extends ArrayList<T>{
 	
 	public double getFitnessMedio() {
 		return 0.0;
+	}
+
+	public double getExtremo() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public void setAbsoluto(Individuo ind) {
+		
+	}
+	
+	public Individuo getAbsoluto() {
+		return null;
+	}
+
+	public void actualizarAbsoluto(Individuo mejorIndividuo) {
+		
+		
 	}
 	
 	

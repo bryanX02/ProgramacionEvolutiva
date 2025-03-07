@@ -1,6 +1,6 @@
 package modelo;
 
-public class Individuo <T> {
+public class Individuo <T> implements Cloneable {
 
 	T[] cromosoma;
 	int[] tamGenes;
@@ -9,6 +9,11 @@ public class Individuo <T> {
 	protected double[] max;
 	protected double valorError;
 
+	// Funcion que permite clonar un objeto
+	public Individuo<?> clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return (Individuo<?>) super.clone();
+	}
 	
 	public T[] getCromosoma() {
 		return cromosoma;

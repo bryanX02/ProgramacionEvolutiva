@@ -64,6 +64,7 @@ public class IndividuoFuncion4 extends Individuo<Boolean> implements Cloneable {
 
 	// Función que implementa la evaluación de la función Michalewicz
 	public double getValor() {
+		
 	    int dimensiones = this.tamGenes.length; // Número de dimensiones del problema
 	    double m = 10; // Parámetro m dado en la ecuación
 	    double sum = 0.0;
