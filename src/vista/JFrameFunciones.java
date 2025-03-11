@@ -135,17 +135,19 @@ public class JFrameFunciones extends JFrame {
         }else {
         	poblacion.iniciarGeneracion();
         }
+        poblacion.setAbsoluto(poblacion.getMejorIndividuo().clone());
         
         // Y ahora se aplicara el algoritmo de evolucion e iremos guardando las generaciones
         ArrayList<Poblacion> generaciones = new ArrayList<>();
         generaciones.add(poblacion);
         
-        // Variables que registraran la evolucion para mostrar en la gráfica
+        // Variables que registraran la evolucion para mostrar en la grï¿½fica
         XYSeries mejorSeries = new XYSeries("Mejor Fitness", true, false);
         XYSeries mejorAbsolutoSeries = new XYSeries("Mejor Absoluto", true, false);
         XYSeries mediaSeries = new XYSeries("Fitness Medio", true, false);
         
-        // Y ahora se aplicara el algoritmo según el número de generaciones a generar
+        
+        // Y ahora se aplicara el algoritmo segï¿½n el nï¿½mero de generaciones a generar
         for (int i = 0; i < maxGeneraciones; i++) {
         	
         	// Seleccion
@@ -163,7 +165,6 @@ public class JFrameFunciones extends JFrame {
             generaciones.add(nuevaPoblacion);
             
             // Obtenemos el mejor individuo y vemos si es el mejor entre generaciones
-            
             Individuo<?> mejor = nuevaPoblacion.getMejorIndividuo();
             poblacion.actualizarAbsoluto(mejor);
             
@@ -185,7 +186,7 @@ public class JFrameFunciones extends JFrame {
         
         chartPanel.setChart(chart);
         
-        JOptionPane.showMessageDialog(this, "Mejor valor encontrado: " + poblacion.getAbsoluto().getFitness(), "Resultado", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Mejor valor encontrado: " + poblacion.getAbsoluto().getFitness() + "\nIndividuo: " + poblacion.getAbsoluto(), "Resultado", JOptionPane.INFORMATION_MESSAGE);
     	
     }
 

@@ -37,13 +37,7 @@ public class IndividuoFuncion3 extends Individuo<Boolean> implements Cloneable {
     public void setCromosoma(Boolean[] cromosoma) {
         this.cromosoma = cromosoma;
     }
-
-	// Funcion que permite clonar un objeto
-	protected IndividuoFuncion3 clone() throws CloneNotSupportedException {
-		// TODO Auto-generated method stub
-		return (IndividuoFuncion3) super.clone();
-	}
-
+    
 	// Función para obtener los genes separados
     public Boolean[][] getGenes() {
         Boolean[] gen1 = Arrays.copyOfRange(this.cromosoma, 0, this.tamGenes[0]);

@@ -10,10 +10,23 @@ public class Individuo <T> implements Cloneable {
 	protected double valorError;
 
 	// Funcion que permite clonar un objeto
-	public Individuo<?> clone() throws CloneNotSupportedException {
-		// TODO Auto-generated method stub
-		return (Individuo<?>) super.clone();
+	@Override
+	public Individuo<T> clone() {
+	    try {
+	        Individuo<T> copia = (Individuo<T>) super.clone(); // Clonación superficial
+
+	        // Clonación profunda de los arrays
+	        copia.cromosoma = this.cromosoma.clone();
+	        copia.tamGenes = this.tamGenes.clone();
+	        copia.min = this.min.clone();
+	        copia.max = this.max.clone();
+
+	        return copia;
+	    } catch (CloneNotSupportedException e) {
+	        throw new RuntimeException("Error al clonar el individuo", e);
+	    }
 	}
+
 	
 	public T[] getCromosoma() {
 		return cromosoma;

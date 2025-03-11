@@ -112,11 +112,7 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
             // 5. Buscar el individuo correspondiente basándonos en la probabilidad acumulada
             for (int j = 0; j < tamPoblacion; j++) {
                 if (r <= probabilidadesAcumuladas[j]) {
-                    try {
-                        nuevaGeneracion.add((IndividuoFuncion5) this.get(j).clone());
-                    } catch (CloneNotSupportedException e) {
-                        e.printStackTrace();
-                    }
+                    nuevaGeneracion.add((IndividuoFuncion5) this.get(j).clone());
                     break; // Salir del bucle una vez seleccionado el individuo
                 }
             }
@@ -139,11 +135,7 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
                     mejor = candidato;
                 }
             }
-            try {
-                nuevaGeneracion.add((IndividuoFuncion5) mejor.clone());
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+            nuevaGeneracion.add((IndividuoFuncion5) mejor.clone());
         }
         return nuevaGeneracion;
     }
@@ -164,15 +156,11 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
                     peor = candidato;
                 }
             }
-            try {
-                if (rand.nextDouble() < P) {
-                    nuevaGeneracion.add((IndividuoFuncion5) mejor.clone());
-                } else {
-                    nuevaGeneracion.add((IndividuoFuncion5) peor.clone());
-                }
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+            if (rand.nextDouble() < P) {
+			    nuevaGeneracion.add((IndividuoFuncion5) mejor.clone());
+			} else {
+			    nuevaGeneracion.add((IndividuoFuncion5) peor.clone());
+			}
         }
         return nuevaGeneracion;
     }
@@ -192,11 +180,7 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
                 acumulado += (1.0 / this.get(indice).getFitness()) / sumaFitness;
                 indice++;
             }
-            try {
-                nuevaGeneracion.add((IndividuoFuncion5) this.get(indice - 1).clone());
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+            nuevaGeneracion.add((IndividuoFuncion5) this.get(indice - 1).clone());
         }
         return nuevaGeneracion;
     }
@@ -208,12 +192,8 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
         int seleccionados = tamPoblacion / 2;
 
         for (int i = 0; i < seleccionados; i++) {
-            try {
-                nuevaGeneracion.add((IndividuoFuncion5) this.get(i).clone());
-                nuevaGeneracion.add((IndividuoFuncion5) this.get(i).clone());
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+            nuevaGeneracion.add((IndividuoFuncion5) this.get(i).clone());
+			nuevaGeneracion.add((IndividuoFuncion5) this.get(i).clone());
         }
         return nuevaGeneracion;
     }
@@ -226,11 +206,7 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
         for (IndividuoFuncion5 ind : this) {
             int cantidad = (int) ((1.0 / ind.getFitness() / sumaFitness) * tamPoblacion); // Menor fitness = más probabilidades
             for (int j = 0; j < cantidad; j++) {
-                try {
-                    nuevaGeneracion.add((IndividuoFuncion5) ind.clone());
-                } catch (CloneNotSupportedException e) {
-                    e.printStackTrace();
-                }
+                nuevaGeneracion.add((IndividuoFuncion5) ind.clone());
             }
         }
         while (nuevaGeneracion.size() < tamPoblacion) {
@@ -272,22 +248,13 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
 	            padre1.cruzarMonopunto(padre2);
 	        }
 
-	        // Añadir los individuos a la nueva población (se hayan cruzado o no)
-	        try {
-	            nuevaPoblacion.add((IndividuoFuncion5) padre1.clone());
-	            nuevaPoblacion.add((IndividuoFuncion5) padre2.clone());
-	        } catch (CloneNotSupportedException e) {
-	            e.printStackTrace();
-	        }
+	        nuevaPoblacion.add((IndividuoFuncion5) padre1.clone());
+			nuevaPoblacion.add((IndividuoFuncion5) padre2.clone());
 	    }
 
 	    // Si la población era impar, copiamos el último individuo sin cambios
 	    if (this.size() % 2 != 0) {
-	        try {
-	            nuevaPoblacion.add((IndividuoFuncion5) this.get(this.size() - 1).clone());
-	        } catch (CloneNotSupportedException e) {
-	            e.printStackTrace();
-	        }
+	        nuevaPoblacion.add((IndividuoFuncion5) this.get(this.size() - 1).clone());
 	    }
 
 	    // Reemplazamos la población actual con la nueva
@@ -311,22 +278,13 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
 	            padre1.cruzarUniforme(padre2);
 	        }
 
-	        // Añadir los individuos (cruzados o no) a la nueva población
-	        try {
-	            nuevaPoblacion.add((IndividuoFuncion5) padre1.clone());
-	            nuevaPoblacion.add((IndividuoFuncion5) padre2.clone());
-	        } catch (CloneNotSupportedException e) {
-	            e.printStackTrace();
-	        }
+	        nuevaPoblacion.add((IndividuoFuncion5) padre1.clone());
+			nuevaPoblacion.add((IndividuoFuncion5) padre2.clone());
 	    }
 
 	    // Si la población era impar, copiar el último individuo sin cambios
 	    if (this.size() % 2 != 0) {
-	        try {
-	            nuevaPoblacion.add((IndividuoFuncion5) this.get(this.size() - 1).clone());
-	        } catch (CloneNotSupportedException e) {
-	            e.printStackTrace();
-	        }
+	        nuevaPoblacion.add((IndividuoFuncion5) this.get(this.size() - 1).clone());
 	    }
 
 	    // Reemplazamos la población actual con la nueva

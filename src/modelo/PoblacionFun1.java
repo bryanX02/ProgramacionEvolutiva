@@ -1,7 +1,5 @@
 package modelo;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
@@ -102,7 +100,6 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
 	    double[] probabilidadesAcumuladas = new double[tamPoblacion];
 	    double acumulado = 0.0;
 
-	    System.out.println(this.size() + " " + tamPoblacion);
 	    for (int i = 0; i < tamPoblacion; i++) {
 	        acumulado += this.get(i).getFitness() / sumaFitness;
 	        probabilidadesAcumuladas[i] = acumulado;
@@ -118,11 +115,7 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
 	        // 4. Buscar el individuo correspondiente
 	        for (int j = 0; j < tamPoblacion; j++) {
 	            if (r <= probabilidadesAcumuladas[j]) {
-	                try {
-	                    nuevaGeneracion.add((IndividuoFuncion1) this.get(j).clone());
-	                } catch (CloneNotSupportedException e) {
-	                    e.printStackTrace();
-	                }
+	                nuevaGeneracion.add((IndividuoFuncion1) this.get(j).clone());
 	                break; // Salir del bucle una vez seleccionado el individuo
 	            }
 	        }
@@ -143,11 +136,7 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
                     mejor = candidato;
                 }
             }
-            try {
-                nuevaGeneracion.add((IndividuoFuncion1) mejor.clone());
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+            nuevaGeneracion.add((IndividuoFuncion1) mejor.clone());
         }
         return nuevaGeneracion;
     }
@@ -167,15 +156,11 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
                     peor = candidato;
                 }
             }
-            try {
-                if (rand.nextDouble() < P) {
-                    nuevaGeneracion.add((IndividuoFuncion1) mejor.clone());
-                } else {
-                    nuevaGeneracion.add((IndividuoFuncion1) peor.clone());
-                }
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+            if (rand.nextDouble() < P) {
+			    nuevaGeneracion.add((IndividuoFuncion1) mejor.clone());
+			} else {
+			    nuevaGeneracion.add((IndividuoFuncion1) peor.clone());
+			}
         }
         return nuevaGeneracion;
     }
@@ -195,11 +180,7 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
                 acumulado += this.get(indice).getFitness() / sumaFitness;
                 indice++;
             }
-            try {
-                nuevaGeneracion.add((IndividuoFuncion1) this.get(indice - 1).clone());
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+            nuevaGeneracion.add((IndividuoFuncion1) this.get(indice - 1).clone());
         }
         return nuevaGeneracion;
     }
@@ -210,12 +191,8 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
         int seleccionados = tamPoblacion / 2;
 
         for (int i = 0; i < seleccionados; i++) {
-            try {
-                nuevaGeneracion.add((IndividuoFuncion1) this.get(i).clone());
-                nuevaGeneracion.add((IndividuoFuncion1) this.get(i).clone());
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+            nuevaGeneracion.add((IndividuoFuncion1) this.get(i).clone());
+			nuevaGeneracion.add((IndividuoFuncion1) this.get(i).clone());
         }
         return nuevaGeneracion;
     }
@@ -227,11 +204,7 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
         for (IndividuoFuncion1 ind : this) {
             int cantidad = (int) ((ind.getFitness() / sumaFitness) * tamPoblacion);
             for (int j = 0; j < cantidad; j++) {
-                try {
-                    nuevaGeneracion.add((IndividuoFuncion1) ind.clone());
-                } catch (CloneNotSupportedException e) {
-                    e.printStackTrace();
-                }
+                nuevaGeneracion.add((IndividuoFuncion1) ind.clone());
             }
         }
         while (nuevaGeneracion.size() < tamPoblacion) {
@@ -274,22 +247,13 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
 	            padre1.cruzarMonopunto(padre2);
 	        }
 
-	        // Añadir los individuos a la nueva población (se hayan cruzado o no)
-	        try {
-	            nuevaPoblacion.add((IndividuoFuncion1) padre1.clone());
-	            nuevaPoblacion.add((IndividuoFuncion1) padre2.clone());
-	        } catch (CloneNotSupportedException e) {
-	            e.printStackTrace();
-	        }
+	        nuevaPoblacion.add((IndividuoFuncion1) padre1.clone());
+			nuevaPoblacion.add((IndividuoFuncion1) padre2.clone());
 	    }
 
 	    // Si la población era impar, copiamos el último individuo sin cambios
 	    if (this.size() % 2 != 0) {
-	        try {
-	            nuevaPoblacion.add((IndividuoFuncion1) this.get(this.size() - 1).clone());
-	        } catch (CloneNotSupportedException e) {
-	            e.printStackTrace();
-	        }
+	        nuevaPoblacion.add((IndividuoFuncion1) this.get(this.size() - 1).clone());
 	    }
 
 	    // Reemplazamos la población actual con la nueva
@@ -313,22 +277,13 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
 	            padre1.cruzarUniforme(padre2);
 	        }
 
-	        // Añadir los individuos (cruzados o no) a la nueva población
-	        try {
-	            nuevaPoblacion.add((IndividuoFuncion1) padre1.clone());
-	            nuevaPoblacion.add((IndividuoFuncion1) padre2.clone());
-	        } catch (CloneNotSupportedException e) {
-	            e.printStackTrace();
-	        }
+	        nuevaPoblacion.add((IndividuoFuncion1) padre1.clone());
+			nuevaPoblacion.add((IndividuoFuncion1) padre2.clone());
 	    }
 
 	    // Si la población era impar, copiar el último individuo sin cambios
 	    if (this.size() % 2 != 0) {
-	        try {
-	            nuevaPoblacion.add((IndividuoFuncion1) this.get(this.size() - 1).clone());
-	        } catch (CloneNotSupportedException e) {
-	            e.printStackTrace();
-	        }
+	        nuevaPoblacion.add((IndividuoFuncion1) this.get(this.size() - 1).clone());
 	    }
 
 	    // Reemplazamos la población actual con la nueva
@@ -345,12 +300,8 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
 	public void actualizarAbsoluto(Individuo mejorIndividuo) {
 
 		if(mejorIndividuo.getFitness() > mejorIndividuoAbsoluto.getFitness()) {
-			try {
-				mejorIndividuoAbsoluto = (IndividuoFuncion1) mejorIndividuo.clone();
-			} catch (CloneNotSupportedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			System.out.println("Actualizamos porque " + mejorIndividuo.getFitness() + " > " + mejorIndividuoAbsoluto.getFitness());
+			mejorIndividuoAbsoluto = (IndividuoFuncion1) mejorIndividuo.clone();
 		}
 		
 	}

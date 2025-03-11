@@ -93,13 +93,6 @@ public class IndividuoFuncion5 extends Individuo<Double> implements Cloneable {
     }
     
     @Override
-    public IndividuoFuncion5 clone() throws CloneNotSupportedException {
-        IndividuoFuncion5 clon = (IndividuoFuncion5) super.clone();
-        clon.cromosoma = this.cromosoma.clone();
-        return clon;
-    }
-    
-    @Override
     public String toString() {
         return Arrays.toString(cromosoma);
     }

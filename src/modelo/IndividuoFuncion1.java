@@ -63,6 +63,14 @@ public class IndividuoFuncion1 extends Individuo<Boolean> implements Cloneable {
 		double x1 = this.getFenotipo(0), x2 = this.getFenotipo(1);
 		return (21.5 + x1 * Math.sin(4 * Math.PI * x1) + x2 * Math.sin(20 * Math.PI * x2));
 	}
+	
+	// Funcion que implementa la formula para obtener el valor real del cromosoma
+	public double[] getValores() {
+		
+		double[] valores = {this.getFenotipo(0), this.getFenotipo(1)};
+		return valores;
+		
+	}
 
 	// Funcion que convierte binario a decimal
 	private int bin2dec(Boolean[] gen) {
@@ -135,7 +143,9 @@ public class IndividuoFuncion1 extends Individuo<Boolean> implements Cloneable {
 	@Override
 	public String toString() {
 		
-		return Arrays.toString(cromosoma);
+		double[] valores = this.getValores();
+		return "x1 = " + valores[0] + " y x2 = " + valores[1];
 	}	
+	
 
 }
