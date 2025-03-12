@@ -89,8 +89,11 @@ public class PoblacionFun4 extends Poblacion<IndividuoFuncion4>{
         double acumulado = 0.0;
 
         // Usamos 1 / fitness para minimizar (invertir el fitness)
+        double epsilon = 1e-6; // Para evitar divisiones entre 0
+        double fitness = 0;
         for (int i = 0; i < tamPoblacion; i++) {
-            acumulado += (1.0 / this.get(i).getFitness()); // Invertir el fitness para minimizar
+        	fitness = this.get(i).getFitness();
+        	acumulado += 1.0 / (fitness + epsilon);
             probabilidadesAcumuladas[i] = acumulado;
         }
 
@@ -304,7 +307,7 @@ public class PoblacionFun4 extends Poblacion<IndividuoFuncion4>{
 	public void actualizarAbsoluto(Individuo mejorIndividuo) {
 
 		if(mejorIndividuo.getFitness() < mejorIndividuoAbsoluto.getFitness()) {
-			mejorIndividuoAbsoluto = (IndividuoFuncion4) mejorIndividuo;
+			mejorIndividuoAbsoluto = (IndividuoFuncion4) mejorIndividuo.clone();
 		}
 		
 	}

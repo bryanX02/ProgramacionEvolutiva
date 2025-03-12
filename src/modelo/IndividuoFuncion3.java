@@ -67,43 +67,6 @@ public class IndividuoFuncion3 extends Individuo<Boolean> implements Cloneable {
         }
         return sum1 * sum2;
     }
-
-	// Funcion que convierte binario a decimal
-	private int bin2dec(Boolean[] gen) {
-		
-		int decimal = 0;
-	    int length = gen.length;
-
-	    // Iteramos sobre el array booleano desde el último elemento hasta el primero
-	    for (int i = 0; i < length; i++) {
-	        if (gen[length - 1 - i]) {
-	            // Si el valor en la posición es true, añadimos 2^i a la suma decimal
-	            decimal += Math.pow(2, i);
-	        }
-	    }
-	    
-	    return decimal;
-		
-	}
-	
-	// Con esta funcion obtenemos el valor real, usando la formula
-	private double getFenotipo(int i) {
-
-		// Calcular el factor de escala
-	    double aux = (this.max[i] - this.min[i]) / (Math.pow(2, this.tamGenes[i]) - 1);
-	    
-	    // Determinar el inicio y fin del segmento del cromosoma a convertir
-	    int inicio = (i == 0) ? 0 : this.tamGenes[i - 1];
-	    int fin = inicio + this.tamGenes[i];
-
-	    // Extraemos la parte correspondiente del cromosoma
-	    Boolean[] subCromosoma = Arrays.copyOfRange(this.cromosoma, inicio, fin);
-
-	    double xV = this.min[i] + bin2dec(subCromosoma) * aux;
-		
-		return xV;
-	}
-	
 	// En esta funcion el fitness es simplemente el valor
 	public double getFitness() { 
 		return this.getValor();
@@ -136,10 +99,19 @@ public class IndividuoFuncion3 extends Individuo<Boolean> implements Cloneable {
 		
 	}
 	
+	// Funcion que implementa la formula para obtener los valores reales de los genes del cromosoma
+	public double[] getValores() {
+		
+		double[] valores = {this.getFenotipo(0), this.getFenotipo(1)};
+		return valores;
+		
+	}
+	
 	@Override
 	public String toString() {
 		
-		return Arrays.toString(cromosoma);
-	}	
+		double[] valores = this.getValores();
+		return "x1 = " + valores[0] + " y x2 = " + valores[1];
+	}		
 
 }

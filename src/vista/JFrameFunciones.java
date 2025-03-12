@@ -135,7 +135,6 @@ public class JFrameFunciones extends JFrame {
         }else {
         	poblacion.iniciarGeneracion();
         }
-        poblacion.setAbsoluto(poblacion.getMejorIndividuo().clone());
         
         // Y ahora se aplicara el algoritmo de evolucion e iremos guardando las generaciones
         ArrayList<Poblacion> generaciones = new ArrayList<>();
@@ -152,7 +151,7 @@ public class JFrameFunciones extends JFrame {
         	
         	// Seleccion
             Poblacion nuevaPoblacion = poblacion.seleccionarSegun(metodoSeleccion);
-
+            
             // Cruze
             nuevaPoblacion.cruzarSegun(metodoCruce);
             
@@ -165,8 +164,13 @@ public class JFrameFunciones extends JFrame {
             generaciones.add(nuevaPoblacion);
             
             // Obtenemos el mejor individuo y vemos si es el mejor entre generaciones
+            
+            if(i == 0) // Metemos el absoluto en la primera generacion
+            	nuevaPoblacion.setAbsoluto(nuevaPoblacion.getMejorIndividuo().clone());
+            
             Individuo<?> mejor = nuevaPoblacion.getMejorIndividuo();
-            poblacion.actualizarAbsoluto(mejor);
+            System.out.println(mejor.getCromosoma().length);
+            nuevaPoblacion.actualizarAbsoluto(mejor);
             
             mejorSeries.add(i, mejor.getFitness());
             mejorAbsolutoSeries.add(i, nuevaPoblacion.getAbsoluto().getFitness());

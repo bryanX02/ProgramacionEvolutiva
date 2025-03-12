@@ -300,7 +300,6 @@ public class PoblacionFun1 extends Poblacion<IndividuoFuncion1>{
 	public void actualizarAbsoluto(Individuo mejorIndividuo) {
 
 		if(mejorIndividuo.getFitness() > mejorIndividuoAbsoluto.getFitness()) {
-			System.out.println("Actualizamos porque " + mejorIndividuo.getFitness() + " > " + mejorIndividuoAbsoluto.getFitness());
 			mejorIndividuoAbsoluto = (IndividuoFuncion1) mejorIndividuo.clone();
 		}
 		

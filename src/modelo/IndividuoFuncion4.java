@@ -7,6 +7,7 @@ public class IndividuoFuncion4 extends Individuo<Boolean> implements Cloneable {
 	
 	private Random rand = new Random();
 	private static double precision = 0.001;
+	private int dimensiones;
 
 	// Constructor 
 	public IndividuoFuncion4(int dimensiones) {
@@ -14,6 +15,7 @@ public class IndividuoFuncion4 extends Individuo<Boolean> implements Cloneable {
 		this.tamGenes = new int[dimensiones]; 
 		this.min = new double[dimensiones]; 
 		this.max = new double[dimensiones];
+		this.dimensiones = dimensiones;
 		
 		int tamTotal = 0;
 		for (int i = 0; i<dimensiones; i++) {
@@ -59,7 +61,6 @@ public class IndividuoFuncion4 extends Individuo<Boolean> implements Cloneable {
 	// Función que implementa la evaluación de la función Michalewicz
 	public double getValor() {
 		
-	    int dimensiones = this.tamGenes.length; // Número de dimensiones del problema
 	    double m = 10; // Parámetro m dado en la ecuación
 	    double sum = 0.0;
 
@@ -72,43 +73,6 @@ public class IndividuoFuncion4 extends Individuo<Boolean> implements Cloneable {
 	    }
 
 	    return -sum; // Se devuelve el negativo de la suma
-	}
-
-
-	// Funcion que convierte binario a decimal
-	private int bin2dec(Boolean[] gen) {
-		
-		int decimal = 0;
-	    int length = gen.length;
-
-	    // Iteramos sobre el array booleano desde el último elemento hasta el primero
-	    for (int i = 0; i < length; i++) {
-	        if (gen[length - 1 - i]) {
-	            // Si el valor en la posición es true, añadimos 2^i a la suma decimal
-	            decimal += Math.pow(2, i);
-	        }
-	    }
-	    
-	    return decimal;
-		
-	}
-	
-	// Con esta funcion obtenemos el valor real, usando la formula
-	private double getFenotipo(int i) {
-
-		// Calcular el factor de escala
-	    double aux = (this.max[i] - this.min[i]) / (Math.pow(2, this.tamGenes[i]) - 1);
-	    
-	    // Determinar el inicio y fin del segmento del cromosoma a convertir
-	    int inicio = (i == 0) ? 0 : this.tamGenes[i - 1];
-	    int fin = inicio + this.tamGenes[i];
-
-	    // Extraemos la parte correspondiente del cromosoma
-	    Boolean[] subCromosoma = Arrays.copyOfRange(this.cromosoma, inicio, fin);
-
-	    double xV = this.min[i] + bin2dec(subCromosoma) * aux;
-		
-		return xV;
 	}
 	
 	// En esta funcion el fitness es simplemente el valor
@@ -143,10 +107,29 @@ public class IndividuoFuncion4 extends Individuo<Boolean> implements Cloneable {
 		
 	}
 	
+	// Funcion que implementa la formula para obtener los valores reales de los genes del cromosoma
+	public double[] getValores() {
+		
+		
+		double[] valores = new double[dimensiones];
+		for(int i = 0; i < dimensiones; i++) {
+			valores[i] = this.getFenotipo(i);
+		}
+		return valores;
+		
+	}
+	
 	@Override
 	public String toString() {
 		
-		return Arrays.toString(cromosoma);
-	}	
+		double[] valores = this.getValores();
+		String strValores = "x1=" + valores[0];
+		for (int i = 1; i < dimensiones; i++) {
+			
+			strValores += ", x" + (i+1) + "=" + valores[i];
+			
+		}
+		return strValores;
+	}		
 
 }

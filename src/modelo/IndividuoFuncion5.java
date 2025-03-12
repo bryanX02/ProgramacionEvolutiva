@@ -6,7 +6,6 @@ import java.util.Random;
 public class IndividuoFuncion5 extends Individuo<Double> implements Cloneable {
 	
 	private Random rand = new Random();
-	private int dimensiones;
 	private double alpha = 0.5;
 	
 
@@ -23,6 +22,18 @@ public class IndividuoFuncion5 extends Individuo<Double> implements Cloneable {
             this.cromosoma[i] = min[i] + (max[i] - min[i]) * rand.nextDouble();
         }
     }
+	
+	@Override
+	public IndividuoFuncion5 clone() {
+		IndividuoFuncion5 copia = new IndividuoFuncion5(dimensiones);
+
+		// Clonación profunda de los arrays
+		copia.cromosoma = this.cromosoma.clone();
+		copia.min = this.min.clone();
+		copia.max = this.max.clone();
+
+		return copia;
+	}
 	
 	// Método para obtener el valor de la función Michalewicz
     public double getValor() {
@@ -92,9 +103,17 @@ public class IndividuoFuncion5 extends Individuo<Double> implements Cloneable {
         }
     }
     
-    @Override
-    public String toString() {
-        return Arrays.toString(cromosoma);
-    }
+ 	
+ 	@Override
+ 	public String toString() {
+ 		
+ 		String strValores = "x1=" + this.cromosoma[0];
+ 		for (int i = 1; i < dimensiones; i++) {
+ 			
+ 			strValores += ", x" + (i+1) + "=" + this.cromosoma[i];
+ 			
+ 		}
+ 		return strValores;
+ 	}
 
 }
