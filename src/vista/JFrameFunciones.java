@@ -30,6 +30,7 @@ public class JFrameFunciones extends JFrame {
     private JComboBox<String> cmbFuncion, cmbSeleccion, cmbCruce, cmbMutacion;
     private JButton btnEjecutar;
     private ChartPanel chartPanel;
+    private JPanel panelDimensiones;
     
     public JFrameFunciones() {
     	
@@ -82,9 +83,14 @@ public class JFrameFunciones extends JFrame {
         txtElitismo = new JTextField("0");
         panelConfiguracion.add(txtElitismo);
         
-        panelConfiguracion.add(new JLabel("Número de dimensiones:"));
+        // Panel de Dimensiones (Se oculta por defecto)
+        panelDimensiones = new JPanel();
+        panelDimensiones.setLayout(new BoxLayout(panelDimensiones, BoxLayout.Y_AXIS));
+        panelDimensiones.add(new JLabel("Número de dimensiones:"));
         txtDimensiones = new JTextField("2");
-        panelConfiguracion.add(txtDimensiones);
+        panelDimensiones.add(txtDimensiones);
+        panelConfiguracion.add(panelDimensiones);
+        panelDimensiones.setVisible(false);
         
         panelConfiguracion.add(new JLabel("Función Matemática"));
         cmbFuncion = new JComboBox<>(new String[]{"F1: Calibracion y prueba", "F2: Mishra Bird", 
@@ -96,8 +102,9 @@ public class JFrameFunciones extends JFrame {
         panelConfiguracion.add(cmbSeleccion);
         
         panelConfiguracion.add(new JLabel("Método de Cruce:"));
-        cmbCruce = new JComboBox<>(new String[]{"Monopunto", "Uniforme", "Ninguno"});
+        cmbCruce = new JComboBox<>();
         panelConfiguracion.add(cmbCruce);
+        actualizarOpcionesCruce("F1: Calibracion y prueba");
         
         panelConfiguracion.add(new JLabel("Método de Mutación:"));
         cmbMutacion = new JComboBox<>(new String[]{"Mutación Básica", "Ninguno"});
@@ -105,9 +112,41 @@ public class JFrameFunciones extends JFrame {
         
         btnEjecutar = new JButton("Ejecutar Algoritmo");
         panelConfiguracion.add(btnEjecutar);
+        
+        // Agregar listener para cambiar opciones según la función seleccionada
+        cmbFuncion.addActionListener(e -> actualizarOpcionesFuncion());
     	
     	return panelConfiguracion;
     	
+    }
+    
+    private void actualizarOpcionesFuncion() {
+        String funcionSeleccionada = (String) cmbFuncion.getSelectedItem();
+
+        // Mostrar o esconder el campo de dimensiones según la función
+        boolean mostrarDimensiones = funcionSeleccionada.equals("F4: Michalewicz Binarios") || funcionSeleccionada.equals("F5: Michalewicz Reales");
+        panelDimensiones.setVisible(mostrarDimensiones);
+
+        // Actualizar opciones de cruce según la función seleccionada
+        actualizarOpcionesCruce(funcionSeleccionada);
+        
+        // Actualizar UI
+        revalidate();
+        repaint();
+    }
+    
+    private void actualizarOpcionesCruce(String funcionSeleccionada) {
+        cmbCruce.removeAllItems();
+        
+        if (funcionSeleccionada.equals("F5: Michalewicz Reales")) {
+            cmbCruce.addItem("Monopunto");
+            cmbCruce.addItem("Uniforme");
+            cmbCruce.addItem("Aritmético");
+            cmbCruce.addItem("BLX-Alpha");
+        } else {
+            cmbCruce.addItem("Monopunto");
+            cmbCruce.addItem("Uniforme");
+        }
     }
     
     private void ejecutarAlgoritmo() {
@@ -129,11 +168,11 @@ public class JFrameFunciones extends JFrame {
         AlgoritmoGenetico algoritmo = new AlgoritmoGenetico(tamPoblacion, maxGeneraciones, probCruce, probMutacion, elitismo, 3);
         Poblacion poblacion = obtenerPoblacionFuncion(funcion, tamPoblacion, algoritmo);
         
-        // Se inician las generaciones (individuos random)
-        if (funcion == "F4: Michalewicz Binarios" || funcion == "F5: Michalewicz Reales") {
-        	poblacion.iniciarGeneracionDimensionada(dimensiones);
-        }else {
-        	poblacion.iniciarGeneracion();
+        // Iniciar generaciones
+        if (panelDimensiones.isVisible()) {
+            poblacion.iniciarGeneracionDimensionada(dimensiones);
+        } else {
+            poblacion.iniciarGeneracion();
         }
         
         // Y ahora se aplicara el algoritmo de evolucion e iremos guardando las generaciones
@@ -169,7 +208,6 @@ public class JFrameFunciones extends JFrame {
             	nuevaPoblacion.setAbsoluto(nuevaPoblacion.getMejorIndividuo().clone());
             
             Individuo<?> mejor = nuevaPoblacion.getMejorIndividuo();
-            System.out.println(mejor.getCromosoma().length);
             nuevaPoblacion.actualizarAbsoluto(mejor);
             
             mejorSeries.add(i, mejor.getFitness());

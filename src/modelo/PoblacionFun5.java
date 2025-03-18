@@ -69,58 +69,77 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
         }
     }
 
-    public void cruzarSegun(String metodoCruce) {
-        if ("Monopunto".equals(metodoCruce)) {
-            cruceMonopunto();
-        } else if ("Uniforme".equals(metodoCruce)) {
-            cruceUniforme();
-        } else if (!"Ninguno".equals(metodoCruce)){
-            throw new IllegalArgumentException("Método de cruce no válido: " + metodoCruce);
-        }
-    }
-	
-    public PoblacionFun5 seleccionRuleta() {
-        // 1. Calcular la suma total de fitness (valores reales)
-        double sumaFitness = 0.0;
-        for (IndividuoFuncion5 ind : this) {
-            sumaFitness += ind.getFitness();  // Acumulamos los fitness (valores reales)
-        }
+	public void cruzarSegun(String metodoCruce) {
+	    switch (metodoCruce) {
+	        case "Monopunto":
+	            cruceMonopunto();
+	            break;
+	        case "Uniforme":
+	            cruceUniforme();
+	            break;
+	        case "Aritmético":
+	            cruceAritmetico();
+	            break;
+	        case "BLX-Alpha":
+	            cruceBLXAlpha(0.5); // Puedes cambiar el valor de alpha si lo deseas
+	            break;
+	        case "Ninguno":
+	            break;
+	        default:
+	            throw new IllegalArgumentException("Método de cruce no válido: " + metodoCruce);
+	    }
+	}
 
-        // 2. Construir lista de probabilidades acumuladas
-        double[] probabilidadesAcumuladas = new double[tamPoblacion];
-        double acumulado = 0.0;
+	public PoblacionFun5 seleccionRuleta() {
+	    // 1. Encontrar el peor y mejor fitness
+	    double minFitness = Double.MAX_VALUE;
+	    double maxFitness = Double.MIN_VALUE;
 
-        // Usamos 1 / fitness para minimizar (invertir el fitness)
-        for (int i = 0; i < tamPoblacion; i++) {
-            acumulado += (1.0 / this.get(i).getFitness()); // Invertir el fitness para minimizar
-            probabilidadesAcumuladas[i] = acumulado;
-        }
+	    for (IndividuoFuncion5 ind : this) {
+	        double fit = ind.getFitness();
+	        minFitness = Math.min(minFitness, fit);
+	        maxFitness = Math.max(maxFitness, fit);
+	    }
 
-        // Normalizamos las probabilidades acumuladas para que sumen 1
-        for (int i = 0; i < tamPoblacion; i++) {
-            probabilidadesAcumuladas[i] /= acumulado;  // Normalización
-        }
+	    // 2. Ajustar fitness para evitar valores negativos y normalizar
+	    double delta = 1e-6; // Pequeño desplazamiento para evitar valores 0
+	    double ajuste = Math.abs(minFitness) + delta;  
 
-        // 3. Crear una nueva población de tamaño correcto
-        PoblacionFun5 nuevaGeneracion = new PoblacionFun5(tamPoblacion, algoritmo);
-        Random rand = new Random();
+	    // 3. Aplicar normalización de fitness (escala positiva)
+	    double[] fitnessEscalado = new double[tamPoblacion];
+	    double sumaFitnessEscalado = 0.0;
 
-        // 4. Garantizar que seleccionamos exactamente `tamPoblacion` individuos
-        for (int i = 0; i < tamPoblacion; i++) {
-            double r = rand.nextDouble(); // Número aleatorio entre 0 y 1
+	    for (int i = 0; i < tamPoblacion; i++) {
+	        fitnessEscalado[i] = this.get(i).getFitness() + ajuste; // Convertir a valores positivos
+	        sumaFitnessEscalado += fitnessEscalado[i];
+	    }
 
-            // 5. Buscar el individuo correspondiente basándonos en la probabilidad acumulada
-            for (int j = 0; j < tamPoblacion; j++) {
-                if (r <= probabilidadesAcumuladas[j]) {
-                    nuevaGeneracion.add((IndividuoFuncion5) this.get(j).clone());
-                    break; // Salir del bucle una vez seleccionado el individuo
-                }
-            }
-        }
+	    // 4. Crear lista de probabilidades acumuladas
+	    double[] probabilidadesAcumuladas = new double[tamPoblacion];
+	    double acumulado = 0.0;
 
-        return nuevaGeneracion;
-    }
+	    for (int i = 0; i < tamPoblacion; i++) {
+	        acumulado += fitnessEscalado[i] / sumaFitnessEscalado;
+	        probabilidadesAcumuladas[i] = acumulado;
+	    }
 
+	    // 5. Crear nueva población evitando sesgo extremo
+	    PoblacionFun5 nuevaGeneracion = new PoblacionFun5(tamPoblacion, algoritmo);
+	    Random rand = new Random();
+
+	    for (int i = 0; i < tamPoblacion; i++) {
+	        double r = rand.nextDouble(); // Número aleatorio entre 0 y 1
+
+	        for (int j = 0; j < tamPoblacion; j++) {
+	            if (r <= probabilidadesAcumuladas[j]) {
+	                nuevaGeneracion.add((IndividuoFuncion5) this.get(j).clone());
+	                break; // Una vez seleccionado el individuo, salimos del bucle
+	            }
+	        }
+	    }
+
+	    return nuevaGeneracion;
+	}
 
 
     public PoblacionFun5 seleccionTorneoDeterministico() {
@@ -291,6 +310,92 @@ public class PoblacionFun5 extends Poblacion<IndividuoFuncion5>{
 	    this.clear();
 	    this.addAll(nuevaPoblacion);
 	}
+	
+	public void cruceAritmetico() {
+	    Random rand = new Random();
+	    PoblacionFun5 nuevaPoblacion = new PoblacionFun5(this.tamPoblacion, algoritmo);
+
+	    int limite = (this.size() % 2 == 0) ? this.size() : this.size() - 1;
+
+	    for (int i = 0; i < limite; i += 2) {
+	        IndividuoFuncion5 padre1 = this.get(i);
+	        IndividuoFuncion5 padre2 = this.get(i + 1);
+	        IndividuoFuncion5 hijo1 = padre1.clone();
+	        IndividuoFuncion5 hijo2 = padre2.clone();
+	        
+	        if (rand.nextDouble() < algoritmo.getProbCruce()) {
+	            Double[] cromPadre1 = padre1.getCromosoma();
+	            Double[] cromPadre2 = padre2.getCromosoma();
+	            Double[] cromHijo1 = new Double[cromPadre1.length];
+	            Double[] cromHijo2 = new Double[cromPadre2.length];
+
+	            for (int j = 0; j < cromPadre1.length; j++) {
+	            	cromHijo1[j] = 0.5 * cromPadre1[j] + 0.5 * cromPadre2[j];
+	            	cromHijo2[j] = 0.5 * cromPadre2[j] + 0.5 * cromPadre1[j];
+	            }
+	            
+	            hijo1.setCromosoma(cromHijo1);
+	            hijo2.setCromosoma(cromHijo2);
+
+	            nuevaPoblacion.add(hijo1);
+	            nuevaPoblacion.add(hijo2);
+	        } else {
+	            nuevaPoblacion.add((IndividuoFuncion5) padre1.clone());
+	            nuevaPoblacion.add((IndividuoFuncion5) padre2.clone());
+	        }
+	    }
+
+	    if (this.size() % 2 != 0) {
+	        nuevaPoblacion.add((IndividuoFuncion5) this.get(this.size() - 1).clone());
+	    }
+
+	    this.clear();
+	    this.addAll(nuevaPoblacion);
+	}
+
+	public void cruceBLXAlpha(double alpha) {
+	    Random rand = new Random();
+	    PoblacionFun5 nuevaPoblacion = new PoblacionFun5(this.tamPoblacion, algoritmo);
+
+	    int limite = (this.size() % 2 == 0) ? this.size() : this.size() - 1;
+
+	    for (int i = 0; i < limite; i += 2) {
+	        IndividuoFuncion5 padre1 = this.get(i);
+	        IndividuoFuncion5 padre2 = this.get(i + 1);
+	        IndividuoFuncion5 hijo1 = padre1.clone();
+	        IndividuoFuncion5 hijo2 = padre2.clone();
+
+	        if (rand.nextDouble() < algoritmo.getProbCruce()) {
+	            Double[] cromPadre1 = padre1.getCromosoma();
+	            Double[] cromPadre2 = padre2.getCromosoma();
+	            Double[] cromHijo1 = new Double[cromPadre1.length];
+	            Double[] cromHijo2 = new Double[cromPadre2.length];
+
+	            for (int j = 0; j < cromPadre1.length; j++) {
+	                double min = Math.min(cromPadre1[j], cromPadre2[j]);
+	                double max = Math.max(cromPadre1[j], cromPadre2[j]);
+	                double d = max - min;
+
+	                cromHijo1[j] = min - alpha * d + rand.nextDouble() * ((1 + 2 * alpha) * d);
+	                cromHijo2[j] = min - alpha * d + rand.nextDouble() * ((1 + 2 * alpha) * d);
+	            }
+
+	            nuevaPoblacion.add(hijo1);
+	            nuevaPoblacion.add(hijo2);
+	        } else {
+	            nuevaPoblacion.add((IndividuoFuncion5) padre1.clone());
+	            nuevaPoblacion.add((IndividuoFuncion5) padre2.clone());
+	        }
+	    }
+
+	    if (this.size() % 2 != 0) {
+	        nuevaPoblacion.add((IndividuoFuncion5) this.get(this.size() - 1).clone());
+	    }
+
+	    this.clear();
+	    this.addAll(nuevaPoblacion);
+	}
+
 
 	@Override
 	public IndividuoFuncion5 getMejorIndividuo() {
