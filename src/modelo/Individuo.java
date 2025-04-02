@@ -1,16 +1,52 @@
 package modelo;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Individuo <T> implements Cloneable {
 
 	protected T[] cromosoma;
 	protected int[] tamGenes;
-	protected double[] min;
-	protected double[] max;
 	protected double valorError;
 	protected int dimensiones;
 
+	protected static final int GRID_SIZE = 15;
+	protected static final int NUM_HABITACIONES = 20;
+	protected static final int[] BASE = {7, 7};
+	protected static final Map<Integer, int[]> HABITACIONES = new HashMap<>();
+	protected static final Set<int[]> OBSTACULOS = new HashSet<>();
+	
+	protected static final int[][] DIRECCIONES = {
+    	    {-1, 0}, {1, 0}, {0, -1}, {0, 1} // Solo arriba, abajo, izquierda y derecha
+    };
+    
+    static {
+        // Definir las coordenadas fijas de las habitaciones
+        int[][] habitacionesFijas = {
+            {2,2}, {2,12}, {12,2}, {12,12}, {2,7}, {7,2}, {7,12}, {12,7}, {0,7}, {7,0},
+            {14,7}, {7,14}, {0,0}, {0,14}, {14,0}, {14,14}, {4,4}, {4,12}, {10,4}, {10,12}
+        };
+        for (int i = 0; i < NUM_HABITACIONES; i++) {
+            HABITACIONES.put(i + 1, habitacionesFijas[i]);
+        }
+        
+        // Definir los obstáculos
+        int[][] obstaculosFijos = {
+            {5,5}, {5,6}, {5,7}, {5,8}, {5,9},
+            {8,10}, {9,10}, {10,10}, {11,10}, {12,10},
+            {10,3}, {11,4},
+            {10,6}, {11,6}, {12,6}, {13,6},
+            {8,1}, {8,2}, {8,3}, {8,4},
+            {0,13}, {1,13},
+            {3,8}, {3,9}, {3,10}, {3,11}
+        };
+        for (int[] obst : obstaculosFijos) {
+            OBSTACULOS.add(obst);
+        }
+    }
 	
 	
 	// Funcion que permite clonar un objeto
@@ -22,8 +58,6 @@ public class Individuo <T> implements Cloneable {
 	        // Clonación profunda de los arrays
 	        copia.cromosoma = this.cromosoma.clone();
 	        copia.tamGenes = this.tamGenes.clone();
-	        copia.min = this.min.clone();
-	        copia.max = this.max.clone();
 
 	        return copia;
 	    } catch (CloneNotSupportedException e) {
@@ -50,43 +84,11 @@ public class Individuo <T> implements Cloneable {
 	}
 
 	// Con esta funcion obtenemos el valor real, usando la formula
-	protected double getFenotipo(int i) {
+	protected double getFenotipo() {
+		return 0;
 
-		// Calcular el factor de escala
-	    double aux = (this.max[i] - this.min[i]) / (Math.pow(2, this.tamGenes[i]) - 1);
-	    
-	    // Determinar el inicio y fin del segmento del cromosoma a convertir
-	    int inicio = 0;
-	    for (int j = 0; j < i; j++) {
-	        inicio += this.tamGenes[j];
-	    }
-	    int fin = inicio + this.tamGenes[i];
-
-	    // Extraemos la parte correspondiente del cromosoma
-	    Boolean[] subCromosoma = (Boolean[]) Arrays.copyOfRange(this.cromosoma, inicio, fin);
-
-	    double xV = this.min[i] + bin2dec(subCromosoma) * aux;
-		
-		return xV;
 	}
 	
-	// Funcion que convierte binario a decimal
-	private int bin2dec(Boolean[] gen) {
-		
-		int decimal = 0;
-	    int length = gen.length;
-
-	    // Iteramos sobre el array booleano desde el último elemento hasta el primero
-	    for (int i = 0; i < length; i++) {
-	        if (gen[length - 1 - i]) {
-	            // Si el valor en la posición es true, añadimos 2^i a la suma decimal
-	            decimal += Math.pow(2, i);
-	        }
-	    }
-	    
-	    return decimal;
-		
-	}
 
 }
 

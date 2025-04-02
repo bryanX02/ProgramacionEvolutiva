@@ -1,5 +1,7 @@
 package modelo;
 
+import java.util.Random;
+
 public class AlgoritmoGenetico {
 
 	private int tamPoblacion;
@@ -11,6 +13,7 @@ public class AlgoritmoGenetico {
 	private Individuo elMejor; 
 	private int pos_mejor;
 	private double elitismo;
+	public Random rand;
 
 
 	public AlgoritmoGenetico(int tamPoblacion, int maxGeneraciones, double probCruce, double probMutacion, double elitismo, int tamTorneo) {
@@ -21,6 +24,7 @@ public class AlgoritmoGenetico {
 		this.probMutacion = probMutacion;
 		this.tamTorneo = tamTorneo;
 		this.elitismo = elitismo;
+		this.rand = new Random();
 	}
 
 
