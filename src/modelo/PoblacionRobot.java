@@ -328,14 +328,15 @@ public class PoblacionRobot extends Poblacion<IndividuoRobot> {
 
     @Override
     public void actualizarAbsoluto(Individuo mejorIndividuo) {
-        if (mejorIndividuoAbsoluto == null || mejorIndividuo.getFitness() < mejorIndividuoAbsoluto.getFitness()) {
-            mejorIndividuoAbsoluto = (IndividuoRobot) mejorIndividuo.clone();
-        }
+    	IndividuoRobot candidato = (IndividuoRobot) mejorIndividuo;
+		if (mejorIndividuoAbsoluto == null || candidato.getFitness() < mejorIndividuoAbsoluto.getFitness()) {
+			mejorIndividuoAbsoluto = candidato.clone();
+		}
     }
 
     @Override
     public void setAbsoluto(Individuo ind) {
-        mejorIndividuoAbsoluto = (IndividuoRobot) ind;
+        mejorIndividuoAbsoluto = (IndividuoRobot) ind.clone();
     }
 
     @Override

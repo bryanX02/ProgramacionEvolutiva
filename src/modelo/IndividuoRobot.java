@@ -18,6 +18,13 @@ public class IndividuoRobot extends Individuo<Integer> {
     public void setCromosoma(List<Integer> cromosomaLista) {
         this.cromosoma = cromosomaLista.toArray(new Integer[0]);
     }
+    
+    @Override
+    public IndividuoRobot clone() {
+        // Llama al método clone() de la clase padre (Individuo), 
+        // que ya se encarga de todo el trabajo de copia profunda.
+        return (IndividuoRobot) super.clone();
+    }
 
     // FUNCIONES DE RUTA Y FITNESS
     public List<int[]> getRuta() {
@@ -86,6 +93,7 @@ public class IndividuoRobot extends Individuo<Integer> {
             }
 
             distanciaTotal += tramo.size();
+        
             actual = destino;
         }
 
@@ -307,95 +315,109 @@ public class IndividuoRobot extends Individuo<Integer> {
     
     public void cruzarPMX(IndividuoRobot otro) {
         Random rand = new Random();
-        int punto1 = rand.nextInt(NUM_HABITACIONES);
-        int punto2 = rand.nextInt(NUM_HABITACIONES - punto1) + punto1;
+        int n = this.cromosoma.length;
+        
+        // 1. Escoger puntos de corte
+        int punto1 = rand.nextInt(n);
+        int punto2 = rand.nextInt(n);
+        if (punto1 > punto2) {
+            int temp = punto1;
+            punto1 = punto2;
+            punto2 = temp;
+        }
 
-        Integer[] hijo1 = new Integer[NUM_HABITACIONES];
-        Integer[] hijo2 = new Integer[NUM_HABITACIONES];
+        // 2. Crear hijos
+        Integer[] hijo1 = new Integer[n];
+        Integer[] hijo2 = new Integer[n];
 
-        // Inicializar los hijos con valores nulos
-        Arrays.fill(hijo1, null);
-        Arrays.fill(hijo2, null);
-
-        // Paso 1: Copiar el segmento entre los puntos de corte
+        // 3. Copiar el segmento del padre opuesto a cada hijo
+        Map<Integer, Integer> mapeo1 = new HashMap<>();
+        Map<Integer, Integer> mapeo2 = new HashMap<>();
         for (int i = punto1; i <= punto2; i++) {
-            hijo1[i] = otro.cromosoma[i]; // Hijo 1 recibe el segmento del padre 2
-            hijo2[i] = this.cromosoma[i]; // Hijo 2 recibe el segmento del padre 1
+            hijo1[i] = otro.cromosoma[i];
+            hijo2[i] = this.cromosoma[i];
+            mapeo1.put(hijo1[i], hijo2[i]);
+            mapeo2.put(hijo2[i], hijo1[i]);
         }
 
-        // Paso 2: Mapear los valores restantes
-        for (int i = 0; i < NUM_HABITACIONES; i++) {
-            if (i < punto1 || i > punto2) {
-                // Para hijo1
-                if (!contiene(hijo1, this.cromosoma[i])) {
-                    hijo1[i] = this.cromosoma[i];
-                } else {
-                    hijo1[i] = mapearGen(this.cromosoma, otro.cromosoma, this.cromosoma[i], punto1, punto2);
-                }
+        // 4. Llenar el resto del cromosoma
+        for (int i = 0; i < n; i++) {
+            if (i >= punto1 && i <= punto2) continue; // Saltar el segmento ya copiado
 
-                // Para hijo2
-                if (!contiene(hijo2, otro.cromosoma[i])) {
-                    hijo2[i] = otro.cromosoma[i];
-                } else {
-                    hijo2[i] = mapearGen(otro.cromosoma, this.cromosoma, otro.cromosoma[i], punto1, punto2);
-                }
+            // Llenar hijo 1
+            Integer genPadre1 = this.cromosoma[i];
+            while (mapeo1.containsKey(genPadre1)) {
+                genPadre1 = mapeo1.get(genPadre1);
             }
+            hijo1[i] = genPadre1;
+
+            // Llenar hijo 2
+            Integer genPadre2 = otro.cromosoma[i];
+            while (mapeo2.containsKey(genPadre2)) {
+                genPadre2 = mapeo2.get(genPadre2);
+            }
+            hijo2[i] = genPadre2;
         }
 
-        // Asignar los hijos a los padres
+        // Asignar los nuevos cromosomas
         this.cromosoma = hijo1;
         otro.cromosoma = hijo2;
     }
 
-    private Integer mapearGen(Integer[] padre1, Integer[] padre2, int gen, int punto1, int punto2) {
-        // Buscar el gen en el segmento copiado del padre2
-        for (int i = punto1; i <= punto2; i++) {
-            if (padre2[i] == gen) {
-                return padre1[i]; // Devolver el gen correspondiente en el padre1
-            }
-        }
-        return gen; // Si no se encuentra, devolver el gen original
-    }
-
-    private boolean contiene(Integer[] cromosoma, int gen) {
-        for (Integer valor : cromosoma) {
-            if (valor != null && valor == gen) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
     public void cruzarOX(IndividuoRobot otro) {
         Random rand = new Random();
-        int punto1 = rand.nextInt(NUM_HABITACIONES);
-        int punto2 = rand.nextInt(NUM_HABITACIONES - punto1) + punto1;
+        int n = this.cromosoma.length;
 
-        Integer[] hijo1 = new Integer[NUM_HABITACIONES];
-        Integer[] hijo2 = new Integer[NUM_HABITACIONES];
-
-        // Copiar el segmento entre los puntos de corte
-        for (int i = punto1; i <= punto2; i++) {
-            hijo1[i] = this.cromosoma[i];
-            hijo2[i] = otro.cromosoma[i];
+        // 1. Escoger puntos de corte
+        int punto1 = rand.nextInt(n);
+        int punto2 = rand.nextInt(n);
+        if (punto1 > punto2) {
+            int temp = punto1;
+            punto1 = punto2;
+            punto2 = temp;
         }
 
-        // Completar el resto de los genes
-        completarOX(hijo1, otro.cromosoma, punto2);
-        completarOX(hijo2, this.cromosoma, punto2);
+        // 2. Preparar hijos y genes del segmento
+        Integer[] hijo1 = new Integer[n];
+        Integer[] hijo2 = new Integer[n];
+        Set<Integer> genesHijo1 = new HashSet<>();
+        Set<Integer> genesHijo2 = new HashSet<>();
+
+        // 3. Copiar segmento y guardar los genes
+        for (int i = punto1; i <= punto2; i++) {
+            hijo1[i] = this.cromosoma[i];
+            genesHijo1.add(hijo1[i]);
+            hijo2[i] = otro.cromosoma[i];
+            genesHijo2.add(hijo2[i]);
+        }
+
+        // 4. Rellenar los genes faltantes desde el otro padre
+        // Rellenar hijo 1 con genes de padre 2
+        int indicePadre = (punto2 + 1) % n;
+        int indiceHijo = (punto2 + 1) % n;
+        while (indiceHijo != punto1) {
+            int gen = otro.cromosoma[indicePadre];
+            if (!genesHijo1.contains(gen)) {
+                hijo1[indiceHijo] = gen;
+                indiceHijo = (indiceHijo + 1) % n;
+            }
+            indicePadre = (indicePadre + 1) % n;
+        }
+
+        // Rellenar hijo 2 con genes de padre 1
+        indicePadre = (punto2 + 1) % n;
+        indiceHijo = (punto2 + 1) % n;
+        while (indiceHijo != punto1) {
+            int gen = this.cromosoma[indicePadre];
+            if (!genesHijo2.contains(gen)) {
+                hijo2[indiceHijo] = gen;
+                indiceHijo = (indiceHijo + 1) % n;
+            }
+            indicePadre = (indicePadre + 1) % n;
+        }
 
         this.cromosoma = hijo1;
         otro.cromosoma = hijo2;
-    }
-
-    private void completarOX(Integer[] hijo, Integer[] padre, int punto2) {
-        int index = (punto2 + 1) % NUM_HABITACIONES;
-        for (int i = 0; i < NUM_HABITACIONES; i++) {
-            if (!Arrays.asList(hijo).contains(padre[i])) {
-                hijo[index] = padre[i];
-                index = (index + 1) % NUM_HABITACIONES;
-            }
-        }
     }
     
     public void cruzarOXPP(IndividuoRobot otro) {
@@ -522,35 +544,52 @@ public class IndividuoRobot extends Individuo<Integer> {
     }
     
     public void cruzarERX(IndividuoRobot otro) {
-        // Crear una lista de vecinos para cada habitación
+        // 1. Creamos el mapa de adyacencia (vecinos) de ambos padres
         Map<Integer, Set<Integer>> vecinos = new HashMap<>();
         for (int i = 1; i <= NUM_HABITACIONES; i++) {
             vecinos.put(i, new HashSet<>());
         }
-
-        // Agregar vecinos de ambos padres
-        agregarVecinos(this.cromosoma, vecinos);
+        agregarVecinos(this.cromosoma, vecinos); // Usa el método que ya tenías
         agregarVecinos(otro.cromosoma, vecinos);
 
-        // Construir el hijo
+        // 2. Construimnos el hijo
         Integer[] hijo = new Integer[NUM_HABITACIONES];
-        int actual = this.cromosoma[0]; // Empezar con el primer gen del primer padre
+        Set<Integer> visitados = new HashSet<>(); // Para buscar eficientemente los ya usados
+        int actual = this.cromosoma[0]; // El hijo empieza con la primera habitación del padre 1
 
         for (int i = 0; i < NUM_HABITACIONES; i++) {
             hijo[i] = actual;
+            visitados.add(actual);
 
-            // Eliminar el gen actual de los vecinos
-            for (Set<Integer> set : vecinos.values()) {
-                set.remove(actual);
-            }
+            // Se elimina la habitación actual de todas las listas de vecinos
+            final int genActualParaEliminar = actual;
+            vecinos.values().forEach(set -> set.remove(genActualParaEliminar));
 
-            // Seleccionar el siguiente gen basado en los vecinos
-            if (!vecinos.get(actual).isEmpty()) {
-                actual = vecinos.get(actual).iterator().next();
+            // 3. LÓGICA CORREGIDA: Elegimos la siguiente habitación
+            Set<Integer> candidatos = vecinos.get(actual);
+
+            if (candidatos != null && !candidatos.isEmpty()) {
+                int mejorSiguiente = -1;
+                int minConexiones = Integer.MAX_VALUE;
+
+                // Se itera sobre los vecinos de la habitación actual para encontrar el "mejor"
+                for (int candidato : candidatos) {
+                    // Se mira cuántos vecinos tiene a su vez cada candidato
+                    int conexionesCandidato = vecinos.get(candidato).size();
+                    
+                    // Si este candidato tiene menos conexiones que el mejor encontrado hasta ahora,
+                    // se convierte en el nuevo mejor.
+                    if (conexionesCandidato < minConexiones) {
+                        minConexiones = conexionesCandidato;
+                        mejorSiguiente = candidato;
+                    }
+                }
+                actual = mejorSiguiente;
+
             } else {
-                // Si no hay vecinos, seleccionar un gen aleatorio no usado
+                // Si la habitación actual no tiene más vecinos, se elige una no visitada al azar
                 for (int j = 1; j <= NUM_HABITACIONES; j++) {
-                    if (!Arrays.asList(hijo).contains(j)) {
+                    if (!visitados.contains(j)) {
                         actual = j;
                         break;
                     }
@@ -618,36 +657,88 @@ public class IndividuoRobot extends Individuo<Integer> {
         this.cromosoma[pos2] = temp;
     }
     
-    
+    private int getDistanciaTramo(int idHabitacionA, int idHabitacionB) {
+        // Si el ID es 0, usa las coordenadas de la BASE, si no, busca la habitación
+        int[] posA = (idHabitacionA == 0) ? BASE : HABITACIONES.get(idHabitacionA);
+        int[] posB = (idHabitacionB == 0) ? BASE : HABITACIONES.get(idHabitacionB);
+
+        List<int[]> tramo = rutaCache.obtenerRuta(posA, posB);
+        if (tramo == null) {
+            tramo = aEstrella(posA, posB);
+            if (tramo == null || tramo.isEmpty()) {
+                return 1000; // Penalización si no hay ruta
+            }
+            rutaCache.guardarRuta(posA, posB, tramo);
+        }
+        return tramo.size(); // La distancia es el número de pasos
+    }
     
     public void mutacionHeuristica() {
-        Random rand = new Random();
-        int pos1 = rand.nextInt(NUM_HABITACIONES);
-        int pos2 = rand.nextInt(NUM_HABITACIONES);
+        // Recorre todas las combinaciones de tramos posibles
+        for (int i = 0; i < cromosoma.length - 1; i++) {
+            for (int k = i + 1; k < cromosoma.length; k++) {
+                
+                // Tramo 1: conecta (i-1) con i. Tramo 2: conecta k con (k+1)
+                // Si i=0, el anterior es la BASE. Si k es el último, el siguiente es la BASE.
+                int anterior_a_i = (i == 0) ? 0 : cromosoma[i - 1];
+                int habitacion_i = cromosoma[i];
+                
+                int habitacion_k = cromosoma[k];
+                int siguiente_a_k = (k == cromosoma.length - 1) ? 0 : cromosoma[k + 1];
 
-        // Intercambiar genes si mejora el fitness
-        double fitnessActual = this.getFitness();
-        int temp = this.cromosoma[pos1];
-        this.cromosoma[pos1] = this.cromosoma[pos2];
-        this.cromosoma[pos2] = temp;
+                // Calcula el costo de los tramos actuales
+                int costoActual = getDistanciaTramo(anterior_a_i, habitacion_i) + getDistanciaTramo(habitacion_k, siguiente_a_k);
 
-        double fitnessNuevo = this.getFitness();
-        if (fitnessNuevo > fitnessActual) {
-            // Si no mejora, revertir el intercambio
-            this.cromosoma[pos2] = this.cromosoma[pos1];
-            this.cromosoma[pos1] = temp;
+                // Calcula el costo si invertimos el segmento entre i y k
+                // Las nuevas conexiones serían (i-1) con k y i con (k+1)
+                int costoNuevo = getDistanciaTramo(anterior_a_i, habitacion_k) + getDistanciaTramo(habitacion_i, siguiente_a_k);
+
+                // Si el nuevo camino es más corto, hacemos la inversión y terminamos
+                if (costoNuevo < costoActual) {
+                    List<Integer> sublista = Arrays.asList(this.cromosoma).subList(i, k + 1);
+                    Collections.reverse(sublista);
+                    return; // Aplica solo la primera mejora encontrada
+                }
+            }
         }
     }
     
+    /* Selecciona un segmento aleatorio del cromosoma y baraja (mezcla)
+    * el orden de los genes únicamente dentro de ese segmento.
+    */
     public void mutacionPropia() {
-        Random rand = new Random();
-        int punto1 = rand.nextInt(NUM_HABITACIONES);
-        int punto2 = rand.nextInt(NUM_HABITACIONES - punto1) + punto1;
+       Random rand = new Random();
+       int n = this.cromosoma.length;
+       if (n < 2) return; // No se puede mutar si hay menos de 2 elementos
 
-        // Invertir el segmento entre punto1 y punto2
-        List<Integer> sublista = Arrays.asList(this.cromosoma).subList(punto1, punto2 + 1);
-        Collections.reverse(sublista);
-    }
+       // 1. Escogemos dos puntos de corte distintos para definir un segmento
+       int punto1 = rand.nextInt(n);
+       int punto2 = rand.nextInt(n);
+       
+       // Nos aseguramos de que punto1 sea menor que punto2
+       if (punto1 > punto2) {
+           int temp = punto1;
+           punto1 = punto2;
+           punto2 = temp;
+       } else if (punto1 == punto2) {
+           // Si los puntos son iguales, no hay segmento que mezclar. Salimos.
+           return; 
+       }
+
+       // 2. Extraemos el segmento del cromosoma a una lista separada
+       List<Integer> segmento = new ArrayList<>();
+       for (int i = punto1; i <= punto2; i++) {
+           segmento.add(this.cromosoma[i]);
+       }
+
+       // 3. Barajamos aleatoriamente los elementos de ese segmento
+       Collections.shuffle(segmento);
+
+       // 4. Y volvemos a colocar el segmento barajado en el cromosoma original
+       for (int i = 0; i <= (punto2 - punto1); i++) {
+           this.cromosoma[punto1 + i] = segmento.get(i);
+       }
+   }
     
     // FUNCIONES AUXILIARES
     private void agregarVecinos(Integer[] cromosoma, Map<Integer, Set<Integer>> vecinos) {
