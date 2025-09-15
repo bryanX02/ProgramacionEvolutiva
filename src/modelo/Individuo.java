@@ -1,10 +1,5 @@
 package modelo;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class Individuo <T> implements Cloneable {
 
@@ -13,40 +8,44 @@ public class Individuo <T> implements Cloneable {
 	protected double valorError;
 	protected int dimensiones;
 
-	protected static final int GRID_SIZE = 15;
-	protected static final int NUM_HABITACIONES = 20;
-	protected static final int[] BASE = {7, 7};
-	protected static final Map<Integer, int[]> HABITACIONES = new HashMap<>();
-	protected static final Set<int[]> OBSTACULOS = new HashSet<>();
-	
 	protected static final int[][] DIRECCIONES = {
     	    {-1, 0}, {1, 0}, {0, -1}, {0, 1} // Solo arriba, abajo, izquierda y derecha
     };
     
-    static {
-        // Definir las coordenadas fijas de las habitaciones
-        int[][] habitacionesFijas = {
-            {2,2}, {2,12}, {12,2}, {12,12}, {2,7}, {7,2}, {7,12}, {12,7}, {0,7}, {7,0},
-            {14,7}, {7,14}, {0,0}, {0,14}, {14,0}, {14,14}, {4,4}, {4,12}, {10,4}, {10,12}
-        };
-        for (int i = 0; i < NUM_HABITACIONES; i++) {
-            HABITACIONES.put(i + 1, habitacionesFijas[i]);
-        }
-        
-        // Definir los obstáculos
-        int[][] obstaculosFijos = {
-            {5,5}, {5,6}, {5,7}, {5,8}, {5,9},
-            {8,10}, {9,10}, {10,10}, {11,10}, {12,10},
-            {10,3}, {11,4},
-            {10,6}, {11,6}, {12,6}, {13,6},
-            {8,1}, {8,2}, {8,3}, {8,4},
-            {0,13}, {1,13},
-            {3,8}, {3,9}, {3,10}, {3,11}
-        };
-        for (int[] obst : obstaculosFijos) {
-            OBSTACULOS.add(obst);
-        }
-    }
+    public static int[][] SANTA_FE_TRAIL_COORDS = {
+        {0,0}, {0,1}, {0,2}, {0,3},
+        {1,3},
+        {2,3}, {2,25}, {2,26}, {2,27},
+        {3,3}, {3,24}, {3,29},
+        {4,3}, {4,24}, {4,29}, 
+        {5,3}, {5,4}, {5,5}, {5,6}, {5,8}, {5,9}, {5,10}, {5,11}, {5,12}, {5,21}, {5,22},
+        {6,12}, {6,29},
+        {7,12},
+        {8,12}, {8,20},
+        {9,12}, {9,20}, {9,29},
+        {10,12}, {10,20},
+        {11,20},
+        {12,12}, {12,29},
+        {13,12},
+        {14,12}, {14,20}, {14,26}, {14,27}, {14,28},
+        {15,12}, {15,20}, {15,23},
+        {16,17},
+        {17,16},
+        {18,12}, {18,16}, {18,24},
+        {19,12}, {19,16}, {19,27},
+        {20,12},
+        {21,12}, {21,16},
+        {22,12}, {22,26},
+        {23,12}, {23,23},
+        {24,3}, {24,4}, {24,7}, {24,8}, {24,9}, {24,10}, {24,11}, {24,16},
+        {25,1}, {25,16},
+        {26,1}, {26,16},
+        {27,1}, {27,8}, {27,9}, {27,10}, {27,11},{27,12}, {27,13},{27,14},
+        {28,1}, {28,7},
+        {29,7},
+        {30,2}, {30,3}, {30,4}, {30,5}
+    };
+   
 	
 	
 	// Funcion que permite clonar un objeto
