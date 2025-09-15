@@ -1,98 +1,97 @@
 package modelo;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
+
 public class AlgoritmoGenetico {
 
-	private int tamPoblacion;
-	private double[] fitness; 
-	private int maxGeneraciones; 
-	private double probCruce; 
-	private double probMutacion; 
-	private int tamTorneo;
-	private Individuo elMejor; 
-	private int pos_mejor;
-	private double elitismo;
+    private final int tamPoblacion;
+    private final int maxGeneraciones;
+    private final double probCruce;
+    private final double probMutacion;
+    private final double elitismo;
+    public final Random rand;
 
+    // Clase interna para devolver los resultados de la evolución
+    public static class EvolucionResult {
+        public final List<Double> mejoresFitness = new ArrayList<>();
+        public final List<Double> mejoresAbsolutos = new ArrayList<>();
+        public final List<Double> fitnessMedios = new ArrayList<>();
+        public int generacionMejor;
+        public Individuo<?> mejorAbsolutoFinal;
+    }
 
-	public AlgoritmoGenetico(int tamPoblacion, int maxGeneraciones, double probCruce, double probMutacion, double elitismo, int tamTorneo) {
-		super();
-		this.tamPoblacion = tamPoblacion;
-		this.maxGeneraciones = maxGeneraciones;
-		this.probCruce = probCruce;
-		this.probMutacion = probMutacion;
-		this.tamTorneo = tamTorneo;
-		this.elitismo = elitismo;
-	}
+    public AlgoritmoGenetico(int tamPoblacion, int maxGeneraciones, double probCruce, double probMutacion, double elitismo, int tamTorneo) {
+        this.tamPoblacion = tamPoblacion;
+        this.maxGeneraciones = maxGeneraciones;
+        this.probCruce = probCruce;
+        this.probMutacion = probMutacion;
+        this.elitismo = elitismo;
+        this.rand = new Random();
+    }
 
+    public double getProbCruce() { return probCruce; }
+    public double getProbMutacion() { return probMutacion; }
 
-	public int getMaxGeneraciones() {
-		return maxGeneraciones;
-	}
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public EvolucionResult evolucionar(PoblacionRobot poblacion, String metodoSeleccion, String metodoCruce, String metodoMutacion) {
+        EvolucionResult resultado = new EvolucionResult();
+        
 
+        // Comparador para ordenar de mejor a peor (menor fitness es mejor)
+        Comparator<IndividuoRobot> comparadorMejorAMenor = (ind1, ind2) -> Double.compare(ind1.getFitness(), ind2.getFitness());
+        
+        // Guardar el mejor individuo inicial
+        poblacion.setAbsoluto(poblacion.getMejorIndividuo());
+        resultado.mejorAbsolutoFinal = poblacion.getAbsoluto();
+        resultado.generacionMejor = 0;
 
-	public void setMaxGeneraciones(int maxGeneraciones) {
-		this.maxGeneraciones = maxGeneraciones;
-	}
+        for (int i = 0; i < maxGeneraciones; i++) {
+            // 1. ELITISMO: Guardar los mejores
+            int numElite = (int) (this.tamPoblacion * this.elitismo);
+            List<IndividuoRobot> elite = new ArrayList<>();
+            if (numElite > 0) {
+                poblacion.sort(comparadorMejorAMenor);
+                for (int j = 0; j < numElite; j++) {
+                    elite.add(poblacion.get(j).clone());
+                }
+            }
 
+            // 2. SELECCIÓN, CRUCE Y MUTACIÓN
+            PoblacionRobot nuevaPoblacion = poblacion.seleccionarSegun(metodoSeleccion);
+            nuevaPoblacion.cruzarSegun(metodoCruce);
+            nuevaPoblacion.mutarSegun(metodoMutacion); 
 
-	public double getProbCruce() {
-		return probCruce;
-	}
+            // 3. ELITISMO: Reintroducir a los mejores
+            if (numElite > 0) {
+                // Ordenar de peor a mejor y reemplazar a los peores
+                nuevaPoblacion.sort(comparadorMejorAMenor.reversed());
+                for (int j = 0; j < numElite; j++) {
+                    nuevaPoblacion.set(j, elite.get(j));
+                }
+            }
+            
+            // 4. ACTUALIZAR Y REGISTRAR DATOS
+            Individuo mejorGeneracion = nuevaPoblacion.getMejorIndividuo();
+            nuevaPoblacion.actualizarAbsoluto(mejorGeneracion);
+            
+            // Si el absoluto de esta generación es nuevo, actualizamos el resultado
+            if (nuevaPoblacion.getAbsoluto() != resultado.mejorAbsolutoFinal) {
+                resultado.mejorAbsolutoFinal = nuevaPoblacion.getAbsoluto();
+                resultado.generacionMejor = i;
+            }
+            
+            // Guardar datos para la gráfica
+            resultado.mejoresFitness.add(mejorGeneracion.getFitness());
+            resultado.fitnessMedios.add(nuevaPoblacion.getFitnessMedio());
+            resultado.mejoresAbsolutos.add(resultado.mejorAbsolutoFinal.getFitness());
+            
+            poblacion = nuevaPoblacion;
+        }
 
-
-	public void setProbCruce(double probCruce) {
-		this.probCruce = probCruce;
-	}
-
-
-	public double getProbMutacion() {
-		return probMutacion;
-	}
-
-
-	public void setProbMutacion(double probMutacion) {
-		this.probMutacion = probMutacion;
-	}
-
-
-	public double[] getFitness() {
-		return fitness;
-	}
-
-
-	public void setFitness(double[] fitness) {
-		this.fitness = fitness;
-	}
-
-
-	public int getTamTorneo() {
-		return tamTorneo;
-	}
-
-
-	public void setTamTorneo(int tamTorneo) {
-		this.tamTorneo = tamTorneo;
-	}
-
-
-	public Individuo getElMejor() {
-		return elMejor;
-	}
-
-
-	public void setElMejor(Individuo elMejor) {
-		this.elMejor = elMejor;
-	}
-
-
-	public int getPos_mejor() {
-		return pos_mejor;
-	}
-
-
-	public void setPos_mejor(int pos_mejor) {
-		this.pos_mejor = pos_mejor;
-	}
-
-	
-	
+        return resultado;
+    }
 }
