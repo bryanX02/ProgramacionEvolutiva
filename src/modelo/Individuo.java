@@ -49,20 +49,27 @@ public class Individuo <T> implements Cloneable {
 	
 	
 	// Funcion que permite clonar un objeto
-	@Override
-	public Individuo<T> clone() {
-	    try {
-	        Individuo<T> copia = (Individuo<T>) super.clone(); // Clonación superficial
+    @Override
+    public Individuo<T> clone() {
+        try {
+            // La llamada a super.clone() hace una copia superficial de los campos.
+            @SuppressWarnings("unchecked")
+            Individuo<T> copia = (Individuo<T>) super.clone();
 
-	        // Clonación profunda de los arrays
-	        copia.cromosoma = this.cromosoma.clone();
-	        copia.tamGenes = this.tamGenes.clone();
+            // Ahora hacemos una copia profunda de los arrays para que no se compartan.
+            if (this.cromosoma != null) {
+                copia.cromosoma = this.cromosoma.clone();
+            }
+            if (this.tamGenes != null) {
+                copia.tamGenes = this.tamGenes.clone();
+            }
 
-	        return copia;
-	    } catch (CloneNotSupportedException e) {
-	        throw new RuntimeException("Error al clonar el individuo", e);
-	    }
-	}
+            return copia;
+        } catch (CloneNotSupportedException e) {
+            // Esta excepción no debería ocurrir si la clase implementa Cloneable.
+            throw new RuntimeException("Error al clonar el individuo. ¿Implementa Cloneable?", e);
+        }
+    }
 
 	
 	public T[] getCromosoma() {
