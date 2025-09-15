@@ -3,100 +3,33 @@ package modelo;
 import java.util.Random;
 
 public class AlgoritmoGenetico {
+    public Random rand = new Random(); // Generador aleatorio
+    private double probMutacion = 0.1;
+    private double probCruce = 0.6;
+    private int profundidadInicial = 6; // Profundidad para generar árboles iniciales
+    private String metodoInicializacion = "Ramped"; // "Completa", "Creciente", "Ramped"
+    private int profMaxBloating = 10; // Profundidad máxima post-operaciones
+    private int tamTorneo = 3; // Tamaño para selección por torneo
+    private double probTorneoProb = 0.75; // Probabilidad de elegir al mejor en torneo probabilístico
+    private double porcTruncamiento = 0.5; // Porcentaje para selección por truncamiento
 
-	private int tamPoblacion;
-	private double[] fitness; 
-	private int maxGeneraciones; 
-	private double probCruce; 
-	private double probMutacion; 
-	private int tamTorneo;
-	private Individuo elMejor; 
-	private int pos_mejor;
-	private double elitismo;
-	public Random rand;
+    // Getters (necesarios para PoblacionHormiga)
+    public double getProbMutacion() { return probMutacion; }
+    public double getProbCruce() { return probCruce; }
+    public int getProfundidadInicial() { return profundidadInicial; }
+    public String getMetodoInicializacion() { return metodoInicializacion; }
+    public int getProfMaxBloating() { return profMaxBloating; }
+    public int getTamTorneo() { return tamTorneo; }
+    public double getProbTorneoProb() { return probTorneoProb; }
+    public double getPorcTruncamiento() { return porcTruncamiento; }
 
-
-	public AlgoritmoGenetico(int tamPoblacion, int maxGeneraciones, double probCruce, double probMutacion, double elitismo, int tamTorneo) {
-		super();
-		this.tamPoblacion = tamPoblacion;
-		this.maxGeneraciones = maxGeneraciones;
-		this.probCruce = probCruce;
-		this.probMutacion = probMutacion;
-		this.tamTorneo = tamTorneo;
-		this.elitismo = elitismo;
-		this.rand = new Random();
-	}
-
-
-	public int getMaxGeneraciones() {
-		return maxGeneraciones;
-	}
-
-
-	public void setMaxGeneraciones(int maxGeneraciones) {
-		this.maxGeneraciones = maxGeneraciones;
-	}
-
-
-	public double getProbCruce() {
-		return probCruce;
-	}
-
-
-	public void setProbCruce(double probCruce) {
-		this.probCruce = probCruce;
-	}
-
-
-	public double getProbMutacion() {
-		return probMutacion;
-	}
-
-
-	public void setProbMutacion(double probMutacion) {
-		this.probMutacion = probMutacion;
-	}
-
-
-	public double[] getFitness() {
-		return fitness;
-	}
-
-
-	public void setFitness(double[] fitness) {
-		this.fitness = fitness;
-	}
-
-
-	public int getTamTorneo() {
-		return tamTorneo;
-	}
-
-
-	public void setTamTorneo(int tamTorneo) {
-		this.tamTorneo = tamTorneo;
-	}
-
-
-	public Individuo getElMejor() {
-		return elMejor;
-	}
-
-
-	public void setElMejor(Individuo elMejor) {
-		this.elMejor = elMejor;
-	}
-
-
-	public int getPos_mejor() {
-		return pos_mejor;
-	}
-
-
-	public void setPos_mejor(int pos_mejor) {
-		this.pos_mejor = pos_mejor;
-	}
-
-	
-	
+    // Setters (para configurar desde fuera)
+    public void setProbMutacion(double probMutacion) { this.probMutacion = probMutacion; }
+    public void setProbCruce(double probCruce) { this.probCruce = probCruce; }
+    public void setProfundidadInicial(int profundidadInicial) { this.profundidadInicial = profundidadInicial; }
+    public void setMetodoInicializacion(String metodoInicializacion) { this.metodoInicializacion = metodoInicializacion; }
+    public void setProfMaxBloating(int profMaxBloating) { this.profMaxBloating = profMaxBloating; }
+    public void setTamTorneo(int tamTorneo) { this.tamTorneo = tamTorneo; }
+    public void setProbTorneoProb(double probTorneoProb) { this.probTorneoProb = probTorneoProb; }
+    public void setPorcTruncamiento(double porcTruncamiento) { this.porcTruncamiento = porcTruncamiento; }
 }
